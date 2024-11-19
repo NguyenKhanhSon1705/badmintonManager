@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>Badminton Manager</title>
 </head>
 <body>
-    <h1>Welcome, <span th:text="${name}">[Tên]</span></h1>
-    <p>Tuổi của bạn là: <span th:text="${age}">[Tuổi]</span></p>
+    <h1 th:text="${message}"></h1>  <!-- Hiển thị message từ controller -->
 </body>
 </html>
