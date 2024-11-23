@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách người dùng</title>
+    <!-- Link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Tiêu đề -->
+        <h1 class="text-center mb-4">Danh sách người dùng</h1>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Bảng hiển thị danh sách người dùng -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Họ và tên</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Vai trò</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lặp qua danh sách người dùng -->
+                <tr th:each="user : ${listuser}">
+                    <td th:text="${user.employeeId}"></td>
+                    <td th:text="${user.fullname}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td>
+                        <!-- Nút Edit -->
+                        <a th:href="@{/manager/edit/{id}(id=${user.employeeId})}" class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+                        <!-- Nút Delete -->
+                        <form th:action="@{/manager/delete/{id}(id=${user.employeeId})}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <!-- Hiển thị thông báo khi danh sách rỗng -->
+                <tr th:if="${listuser == null or #lists.isEmpty(listuser)}">
+                    <td colspan="5" class="text-center text-danger">Không có người dùng nào trong danh sách!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Link Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
