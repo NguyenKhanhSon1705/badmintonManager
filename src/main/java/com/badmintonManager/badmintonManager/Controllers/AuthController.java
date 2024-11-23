@@ -1,6 +1,7 @@
 package com.badmintonManager.badmintonManager.Controllers;
 
 import com.badmintonManager.badmintonManager.models.EmployeesModel;
+import com.badmintonManager.badmintonManager.models.ResponseModel;
 import com.badmintonManager.badmintonManager.services.interfaces.IAuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute EmployeesModel user, Model model) {
-        authService.register(user);
-        model.addAttribute("message", "Registration successful!");
+        user.setRole("user");
+        ResponseModel result = authService.register(user);
+        if(!result.getIsSuccess()){
+            model.addAttribute("error", result.getMessage());
+            return "register";
+        }
+        model.addAttribute("message", result.getMessage());
         return "login"; // Chuyển đến trang login
     }
 
@@ -38,19 +44,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, Model model) {
-        try {
-            EmployeesModel user = authService.login(username, password);
-            if (user != null) {
-                model.addAttribute("user", user);
-                return "redirect:/";
-            } else {
-                model.addAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
+        // try {
+            ResponseModel result = authService.login(username, password);
+            if(!result.getIsSuccess()){
+                model.addAttribute("error", result.getMessage());
                 return "login";
             }
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return "login";
-        }
-
+            model.addAttribute("user", result.getData());
+            return "redirect:/";
     }
 }
