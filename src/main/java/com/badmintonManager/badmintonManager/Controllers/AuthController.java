@@ -10,7 +10,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class AuthController {
 
     private final IAuthService authService;
     private final IUserManager managerService;
-    @Autowired
+    // @Autowired
     public AuthController(IAuthService authService, IUserManager managerService) {
         this.authService = authService;
         this.managerService = managerService;

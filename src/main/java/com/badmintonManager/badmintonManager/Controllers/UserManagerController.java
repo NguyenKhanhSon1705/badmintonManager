@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping("/manager")
 public class UserManagerController {
-    private final IUserManager service ;
+    private final IUserManager service;
     
     public UserManagerController(IUserManager service){
         this.service = service;
@@ -37,14 +37,9 @@ public class UserManagerController {
         if (!result.getIsSuccess()) {
             model.addAttribute("error", result.getMessage());
         } else {
-            // Ép kiểu dữ liệu từ Object sang List<EmployeesModel>
             @SuppressWarnings("unchecked")
             List<EmployeesModel> listuser = (List<EmployeesModel>) result.getData();
             model.addAttribute("listuser", listuser);
-
-            // Debugging để kiểm tra dữ liệu
-            // System.err.println("Danh sách user:");
-            // listuser.forEach(user -> System.err.println(user.getFullname()));
         }
         return "userManager";
     } 
@@ -62,9 +57,7 @@ public class UserManagerController {
 
      @PostMapping("/edit")
     public String updateUser(@ModelAttribute("user") EmployeesModel user, Model model) {
-        System.err.println(user.getFullname());
-        System.err.println(user.getPassword());
-        System.err.println("-------------");
+        
         ResponseModel result = service.updateUser(user);
         if (!result.getIsSuccess()) {
             model.addAttribute("error", result.getMessage());

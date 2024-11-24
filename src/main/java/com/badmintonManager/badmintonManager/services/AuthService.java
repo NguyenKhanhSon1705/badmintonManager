@@ -13,7 +13,7 @@ public class AuthService implements IAuthService {
 
     private final IEmployeesRepository repository;
 
-    @Autowired
+
     public AuthService(IEmployeesRepository repository) {
         this.repository = repository;
     }
