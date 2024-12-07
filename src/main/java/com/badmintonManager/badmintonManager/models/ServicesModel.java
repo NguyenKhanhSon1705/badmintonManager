@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 
 @Entity(name = "services")
 public class ServicesModel {
-
     @Id
     @Column(name="Service_Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Tự động tăng giống như IDENTITY trong SQL Server
@@ -44,4 +43,5 @@ public class ServicesModel {
     public void setPrice(Double price) {
         this.price = price;
     }
+    
 }

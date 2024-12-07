@@ -1,23 +1,27 @@
 package com.badmintonManager.badmintonManager.models;
 
-import jakarta.persistence.*;
+import java.util.List;
 
+import jakarta.persistence.*;
 @Entity
 @Table(name = "courts")
 public class CourtsModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CourtId") // Ánh xạ chính xác với tên cột trong DB
+    @Column(name = "court_id") // Tên cột ánh xạ chính xác với DB
     private int courtId;
 
-    @Column(name = "CourtName", nullable = false, length = 100)
+    @Column(name = "court_name", nullable = false, length = 100)
     private String courtName;
 
-    @Column(name = "Status", nullable = false)
+    @Column(name = "status", nullable = false)
     private int status;
 
-    // Getters and Setters
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
+    private List<CourtDetailsModel> courtDetails;
+
+    // Getters và Setters
     public int getCourtId() {
         return courtId;
     }
@@ -40,5 +44,13 @@ public class CourtsModel {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public List<CourtDetailsModel> getCourtDetails() {
+        return courtDetails;
+    }
+
+    public void setCourtDetails(List<CourtDetailsModel> courtDetails) {
+        this.courtDetails = courtDetails;
     }
 }
