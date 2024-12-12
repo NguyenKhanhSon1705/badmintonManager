@@ -12,11 +12,11 @@ import jakarta.persistence.Table;
 public class SuppliersModel {
 
     @Id
-    @Column(name = "SupplierId")
+    @Column(name = "Supplier_Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int supplierId;
 
-    @Column(name = "SupplierName", nullable = false, length = 100)
+    @Column(name = "Supplier_Name", nullable = false, length = 100)
     private String supplierName;
 
     @Column(name = "Address", length = 255)

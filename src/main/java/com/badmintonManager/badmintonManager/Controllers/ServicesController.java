@@ -40,7 +40,7 @@ public class ServicesController {
         } else {
             @SuppressWarnings("unchecked")
             List<ServicesModel> listServices = (List<ServicesModel>) result.getData();
-            model.addAttribute("listServices", listServices);
+            model.addAttribute("services", listServices);
         }
         
         return "Services";

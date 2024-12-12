@@ -1,7 +1,0 @@
-CREATE TABLE Employees (
-    EmployeeId BIGINT AUTO_INCREMENT PRIMARY KEY,
-    FullName VARCHAR(100),
-    Username VARCHAR(50) NOT NULL UNIQUE,
-    Password VARCHAR(255) NOT NULL,
-    Role VARCHAR(50)
-);
