@@ -62,37 +62,37 @@ public class ServicesController {
             
             service.createServices(sv);
             
-            return "redirect:/services/list"; // Sau khi thêm, chuyển hướng đến danh sách sân
+            return "redirect:/services/list"; // Sau khi thêm, chuyển hướng đến danh sách dịch vụ
         } catch (Exception e) {
-            model.addAttribute("error", "Lỗi khi thêm sân: " + e.getMessage());
-            return "addService"; // Nếu có lỗi, quay lại form thêm sân và hiển thị thông báo
+            model.addAttribute("error", "Lỗi khi thêm dịch vụ: " + e.getMessage());
+            return "addService"; // Nếu có lỗi, quay lại form thêm dịch vụ và hiển thị thông báo
         }
     }
 
     @GetMapping("/edit/{id}")
     public String editService(@PathVariable("id") int serviceId, Model model) {
-        // Lấy thông tin sân cầu lông từ database dựa trên courtId
+        // Lấy thông tin sân dịch vụ từ database dựa trên ServiceId
         ServicesModel sv = service.findById(serviceId);
 
         if (service == null) {
-            model.addAttribute("error", "Sân cầu lông không tồn tại");
+            model.addAttribute("error", "Dịch vụ không tồn tại");
             return "redirect:/services/list";
         }
 
-        // Thêm đối tượng court vào model để hiển thị trong view
+        // Thêm đối tượng service vào model để hiển thị trong view
         model.addAttribute("service", sv);
-        return "editCourt"; // Trả về view editCourt.html
+        return "editService"; // Trả về view editService.html
     }
 
     @PostMapping("/edit/{id}")
-    public String updateCourt(@PathVariable("id") int serviceId, @ModelAttribute ServicesModel sv, Model model) {
-        // Cập nhật sân cầu lông trong database
+    public String updateService(@PathVariable("id") int serviceId, @ModelAttribute ServicesModel sv, Model model) {
+        // Cập nhật dịch vụ trong database
         sv.setServiceId(serviceId);
         ResponseModel response = service.updateServices(sv);
 
         if (!response.getIsSuccess()) {
             model.addAttribute("error", response.getMessage());
-            return "editCourt";
+            return "editService";
         }
 
         return "redirect:/services/list"; // Sau khi sửa xong, chuyển hướng về danh sách

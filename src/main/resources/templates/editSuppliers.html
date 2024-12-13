@@ -29,11 +29,6 @@
 			        <div th:if="${error}" class="alert alert-danger" role="alert">
 			            <p th:text="${error}"></p>
 			        </div>
-
-		        	<!-- Hiển thị thông báo lỗi -->
-		            <div th:if="${error}" class="alert alert-danger">
-		                <p th:text="${error}"></p>
-		            </div>
             
 		            <!-- Form sửa nhà cung cấp -->
 		            <form th:action="@{/suppliers/edit/{id}(id=${supplier.supplierId})}" method="post">

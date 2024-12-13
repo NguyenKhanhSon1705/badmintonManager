@@ -24,31 +24,47 @@
                 <div class="card-body">
                     <h5 class="card-title">Danh sách dịch vụ</h5>
 
-                    <!-- Hiển thị danh sách dịch vụ -->
-                    <table class="table table-borderless datatable">
-    					<thead style="text-align: center;">
-        					<tr>
-            					<th scope="col">#</th>
-            					<th scope="col">Tên dịch vụ</th>
-            					<th scope="col">Giá</th>
-            					<th scope="col">Trạng thái</th>
-        					</tr>
-    					</thead>
-    					<tbody>
-					        <!-- Lặp qua danh sách dịch vụ và hiển thị từng dịch vụ -->
-					        <tr th:each="item : ${services}">
-					            <th scope="row"><a href="#" th:text="'#' + ${item.serviceId}"></a></th>
-					            <td th:text="${item.serviceName}"></td>
-					            <td th:text="${item.price}"></td>
-					            <td>
-					                <span class="badge bg-success">Available</span>
-					            </td>
-					        </tr>
-    					</tbody>
-					</table>
-                </div>
-            </div>
-        </div><!-- End Recent Sales -->
+                <!-- Hiển thị thông báo lỗi -->
+        		<div th:if="${error}" class="alert alert-danger" role="alert">
+            		<p th:text="${error}"></p>
+        		</div>
+
+       	 		<!-- Hiển thị danh sách sân -->
+        		<div class="table-responsive">
+            		<table class="table table-bordered table-hover">
+                		<thead class="table-dark">
+                    		<tr style="text-align: center;">
+		                        <th scope="col">ID</th>
+		                        <th scope="col">Tên dịch vụ</th>
+		                        <th scope="col">Giá (VND)</th>
+		                        <th scope="col">Hành động</th>
+                    		</tr>
+                		</thead>
+                		<tbody>
+		                    <tr th:each="service : ${services}">
+		                        <td style="text-align: center;" th:text="${service.serviceId}"></td>
+		                        <td th:text="${service.serviceName}"></td>
+		                        <td style="text-align: center;" th:text="${service.price}"></td>
+		                        <td style="text-align: center;">
+								    <!-- Nút Sửa -->
+								    <a th:href="@{'/services/edit/' + ${service.serviceId}}" class="btn btn-warning btn-sm me-2" title="Chỉnh sửa">
+								        <i class="fas fa-pencil-alt"></i>
+								    </a>
+								    <!-- Nút Xóa -->
+								    <form th:action="@{'/services/delete/' + ${service.serviceId}}" method="post" class="d-inline">
+								        <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
+								            onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+								            <i class="fas fa-trash-alt"></i>
+								        </button>
+								    </form>
+								</td>
+		                    </tr>
+                		</tbody>
+            		</table>
+        		</div>
+     		</div>
+   		</div>
+   	</div><!-- End Recent Sales -->
 
     </main><!-- End #main -->
 
