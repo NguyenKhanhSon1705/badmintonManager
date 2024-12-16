@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  font-family: Arial;
+  font-size: 17px;
+  padding: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  margin: 0 -16px;
+}
+
+.col-25 {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+}
+
+.col-50 {
+  -ms-flex: 50%; /* IE10 */
+  flex: 50%;
+}
+
+.col-75 {
+  -ms-flex: 75%; /* IE10 */
+  flex: 75%;
+}
+
+.col-25,
+.col-50,
+.col-75 {
+  padding: 0 16px;
+}
+
+.container {
+  background-color: #f2f2f2;
+  padding: 5px 20px 15px 20px;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+}
+
+input[type=text] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+label {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.icon-container {
+  margin-bottom: 20px;
+  padding: 7px 0;
+  font-size: 24px;
+}
+
+.btn {
+  background-color: #e7e7e7;
+  color: black;
+  padding: 10px;
+  margin: 10px 5px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.btn.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+a {
+  color: #2196F3;
+}
+
+hr {
+  border: 1px solid lightgrey;
+}
+
+span.price {
+  float: right;
+  color: grey;
+}
+
+@media (max-width: 800px) {
+  .row {
+    flex-direction: column-reverse;
+  }
+  .col-25 {
+    margin-bottom: 20px;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.bank-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.bank-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 50px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.bank-item img {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.bank-item.selected {
+  border: 2px solid #04AA6D;
+}
+
+.icon-container {
+  display: flex;
+  gap: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>Phiếu thanh toán - <span style="color: blue;">SÂN 1</span></h2>
+<div>
+    <p>Khách lẻ <span class="price" style="color:black"><b>14/12/2024</b></span></p>
+</div>
+
+<div class="row">
+  <div class="col-75">
+    <div class="container">
+      <h3>Chọn ngân hàng</h3>
+      <div class="bank-list" id="bank-list">
+        <div class="bank-item" onclick="selectBank('vietcombank')">
+          <img src="https://vietcombank.nganhangbiz.com/wp-content/uploads/2024/02/logo-vietcombank.png" alt="Vietcombank">
+        </div>
+        <div class="bank-item" onclick="selectBank('vietinbank')">
+          <img src="https://icolor.vn/wp-content/uploads/2024/08/Logo-VietinBank-02.png" alt="Vietinbank">
+        </div>
+        <div class="bank-item" onclick="selectBank('techcombank')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Techcombank_logo.png" alt="Techcombank">
+        </div>
+        <div class="bank-item" onclick="selectBank('mbbank')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Logo_MB_new.png" alt="Mbbank">
+        </div>
+      </div>
+
+      <h3>Thanh toán</h3>
+      <div style="display: flex; justify-content: flex-start;">
+        <button class="btn active" id="card-btn" onclick="selectPaymentMethod('card')">Thẻ nội địa</button>
+        <button class="btn" id="banking-btn" onclick="selectPaymentMethod('banking')">Internet Banking</button>
+      </div>
+
+      <form action="/action_page.php">
+
+        <!-- Khung thanh toán bằng thẻ -->
+        <div id="card-payment">
+          <h3>Thanh toán bằng thẻ</h3>
+          <div style="display: flex; align-items: center; margin-bottom: 20px;">
+            <label for="fname" style="margin-right: 10px;">Thẻ chấp nhận được</label>
+            <div class="icon-container" style="display: flex; gap: 10px;">
+              <i class="fa fa-cc-visa" style="color:navy;"></i>
+              <i class="fa fa-cc-amex" style="color:blue;"></i>
+              <i class="fa fa-cc-mastercard" style="color:red;"></i>
+              <i class="fa fa-cc-discover" style="color:orange;"></i>
+            </div>
+          </div>
+          <label for="ccnum">Số thẻ</label>
+          <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+          <label for="cname">Tên chủ thẻ</label>
+          <input type="text" id="cname" name="cardname" placeholder="Nhập tên chủ thẻ (không dấu)">
+          <div class="row">
+            <div class="col-50">
+              <label for="expyear">Ngày phát hành</label>
+              <input type="text" id="expyear" name="expyear" placeholder="MM/YY">
+            </div>
+            <div class="col-50">
+              <label for="cvv">CVV</label>
+              <input type="text" id="cvv" name="cvv" placeholder="Nhập số CVV">
+            </div>
+          </div>
+        </div>
+
+        <!-- Khung thanh toán Internet Banking -->
+        <div id="banking-payment" class="hidden">
+          <h3>Thanh toán Internet Banking</h3>
+          <label for="bank-account">Số tài khoản</label>
+          <input type="text" id="bank-account" name="bankaccount" placeholder="Nhập số tài khoản">
+          <label for="bank-account">Tên chủ tài khoản</label>
+          <input type="text" id="bank-account" name="bankaccount" placeholder="Nhập tên chủ tài khoản (không dấu)">
+        </div>
+
+        <label>
+          <input type="checkbox" checked="checked" name="sameadr" style="accent-color: green;">
+          Đồng ý với các điều khoản để đảm bảo an toàn thông tin
+        </label>
+        <input type="submit" value="Xác thực" style="background-color: blue; color: white; border: none; padding: 10px 20px; cursor: pointer;" class="btn">
+        
+      </form>
+    </div>
+  </div>
+  <div class="col-25">
+    <div class="container">
+      <h2>Thông tin chung</h2>
+      <hr>
+      <p>Số tiền thanh toán<span class="price">100,000VND</span></p>
+      <p>Phí giao dịch<span class="price">0VND</span></p>
+      <p>Mã giao dịch<span class="price">546533</span></p>
+      <p>Nhà cung cấp<span class="price">VIETIN-SAN CAU LONG</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectBank(bank) {
+  const bankItems = document.querySelectorAll('.bank-item');
+  bankItems.forEach(item => item.classList.remove('selected'));
+  document.querySelector(`[onclick="selectBank('${bank}')"]`).classList.add('selected');
+}
+
+function selectPaymentMethod(method) {
+  const cardBtn = document.getElementById("card-btn");
+  const bankingBtn = document.getElementById("banking-btn");
+  const cardPayment = document.getElementById("card-payment");
+  const bankingPayment = document.getElementById("banking-payment");
+
+  if (method === 'card') {
+    cardBtn.classList.add("active");
+    bankingBtn.classList.remove("active");
+    cardPayment.classList.remove("hidden");
+    bankingPayment.classList.add("hidden");
+  } else {
+    cardBtn.classList.remove("active");
+    bankingBtn.classList.add("active");
+    cardPayment.classList.add("hidden");
+    bankingPayment.classList.remove("hidden");
+  }
+}
+</script>
+
+</body>
+</html>
