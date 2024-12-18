@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.badmintonManager.badmintonManager.models.ResponseModel;
 import com.badmintonManager.badmintonManager.models.SuppliersModel;
 import com.badmintonManager.badmintonManager.services.interfaces.ISuppliersService;
-import com.badmintonManager.badmintonManager.models.SuppliersModel;
 import com.badmintonManager.badmintonManager.utils.getCookies;
 
 import jakarta.servlet.http.HttpServletRequest;
