@@ -10,7 +10,7 @@ public class CourtsModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "court_id") // Tên cột ánh xạ chính xác với DB
-    private int courtId;
+    private Integer courtId;
 
     @Column(name = "court_name", nullable = false, length = 100)
     private String courtName;

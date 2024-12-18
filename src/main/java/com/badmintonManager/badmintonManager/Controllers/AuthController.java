@@ -95,6 +95,6 @@ public class AuthController {
         cookie.setMaxAge(0); // Hết hạn ngay lập tức
         response.addCookie(cookie);
 
-        return "redirect:/login";
+        return "redirect:/auth/login";
     }
 }

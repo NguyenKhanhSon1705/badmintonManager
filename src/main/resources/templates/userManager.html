@@ -32,7 +32,7 @@
 			        <div class="table-responsive">
 			            <table class="table table-bordered table-hover">
 			                <thead class="table-dark">
-			                    <tr>
+			                    <tr style="text-align: center;">
 			                        <th scope="col">ID</th>
 			                        <th scope="col">Họ và tên</th>
 			                        <th scope="col">Tên đăng nhập</th>
@@ -42,26 +42,27 @@
 			                </thead>
 			                <tbody>
 			                    <tr th:each="user : ${listuser}">
-			                    	<td th:text="${user.employeeId}"></td>
+			                    	<td style="text-align: center;" th:text="${user.employeeId}"></td>
 			                    	<td th:text="${user.fullname}"></td>
 			                    	<td th:text="${user.username}"></td>
 			                    	<td th:text="${user.role}"></td>
-			                        <td>
-			                            <!-- Nút Sửa -->
-			                            <a th:href="@{/manager/edit/{id}(id=${user.employeeId})}" class="btn btn-warning btn-sm me-2">
-			                                Sửa
-			                            </a>
-			                            <!-- Nút Xóa -->
-			                            <form th:action="@{/manager/delete/{id}(id=${user.employeeId})}" method="post" class="d-inline">
-			                                <button type="submit" class="btn btn-danger btn-sm"
-			                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-			                                    Xóa
-			                                </button>
-			                            </form>
+			                        <td style="text-align: center;">
+				                        <!-- Nút Sửa -->
+									    <a th:href="@{'/manager/edit/' + ${user.employeeId}}" class="btn btn-warning btn-sm me-2" title="Chỉnh sửa">
+									        <i class="fas fa-pencil-alt"></i>
+									    </a>
+									    <!-- Nút Xóa -->
+									    <form th:action="@{'/manager/delete/' + ${user.employeeId}}" method="post" class="d-inline">
+									        <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
+									            onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+									            <i class="fas fa-trash-alt"></i>
+									        </button>
+									    </form>
 			                        </td>
 			                    </tr>
 			                </tbody>
 			            </table>
+			         </div>
                 </div>
             </div>
         </div><!-- End Recent Sales -->

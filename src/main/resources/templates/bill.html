@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
     xmlns:th="http://www.thymeleaf.org"
@@ -24,7 +22,12 @@
             <div class="card recent-sales overflow-auto">
                 
                 <div class="card-body">
-                    <h5 class="card-title">Danh sách sân</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+					    <h5 class="card-title">Danh sách hóa đơn</h5>
+					    <a th:href="@{/bill/create}" class="btn btn-success btn-sm d-flex align-items-center">
+					        <i class="fas fa-plus me-2"></i> Thêm mới
+					    </a>
+					</div>
 
                 <!-- Hiển thị thông báo lỗi -->
         		<div th:if="${error}" class="alert alert-danger" role="alert">
@@ -38,21 +41,28 @@
                     		<tr style="text-align: center;">
 		                        <th scope="col">ID</th>
 		                        <th scope="col">Tên sân</th>
-		                        <th scope="col">Trạng thái</th>
+		                        <th scope="col">Tổng số tiền</th>
+		                        <th scope="col">Nhân viên tạo đơn</th>
 		                        <th scope="col">Hành động</th>
                     		</tr>
                 		</thead>
                 	<tbody>
-	                    <tr th:each="court : ${listCourts}">
-	                        <td style="text-align: center;" th:text="${court.courtId}"></td>
-	                        <td style="text-align: center;" th:text="${court.courtName}"></td>
-	                        <td th:text="${court.status == 1 ? 'Hoạt động' : 'Không hoạt động'}"></td>
+	                    <tr th:each="bill : ${listBills}">
+	                        <td style="text-align: center;" th:text="${bill.billId}"></td>
+	                        <td style="text-align: center;" th:text="${bill.courtName}"></td>
+	                        <td style="text-align: center;" th:text="${bill.totalAmount}"></td>
+	                        <td style="text-align: center;" th:text="${bill.employeeName}"></td>
 	                        <td style="text-align: center;">
-	                            <a th:href="@{'/courts/edit/' + ${court.courtId}}" class="btn btn-warning btn-sm me-2" title="Chỉnh sửa">
+	                        	<!-- Nút Chi tiết -->
+        						<a th:href="@{'/bill/detail/' + ${bill.billId}}" class="btn btn-primary btn-sm me-2" title="Chi tiết">
+            						<i class="fas fa-file-alt"></i>
+        						</a>
+        						<!-- Nút Chỉnh sửa -->
+	                            <a th:href="@{'/bill/edit/' + ${bill.billId}}" class="btn btn-warning btn-sm me-2" title="Chỉnh sửa">
 								    <i class="fas fa-pencil-alt"></i>
 								</a>
 								<!-- Nút Xóa -->
-								<form th:action="@{'/courts/delete/' + ${court.courtId}}" method="post" class="d-inline">
+								<form th:action="@{'/bill/delete/' + ${bill.billId}}" method="post" class="d-inline">
 								    <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
 								         onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
 								         <i class="fas fa-trash-alt"></i>

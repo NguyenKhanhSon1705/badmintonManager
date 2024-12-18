@@ -4,7 +4,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
     
           <li class="nav-item">
-            <a class="nav-link " href="index.html">
+            <a class="nav-link " href="/admin">
               <i class="bi bi-grid"></i>
               <span>Trang chủ</span>
             </a>
@@ -102,6 +102,25 @@
               </li>
             </ul>
           </li><!-- End Icons Nav -->
+          
+          <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components-navv" data-bs-toggle="collapse" href="#">
+              <i class="bi bi-menu-button-wide"></i><span>Quản lý thu ngân</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components-navv" class="nav-content collapse " data-bs-parent="#sidebar-navv">
+              <li>
+                <a href="/bill/list">
+                  <i class="bi bi-circle"></i><span>Hóa đơn</span>
+                </a>
+              </li>
+              <li>
+                <a href="./templates/payment.html">
+                  <i class="bi bi-circle"></i><span>Thanh toán</span>
+                </a>
+              </li>
+              
+            </ul>
+          </li><!-- End Components Nav -->
     
 
         </ul>

@@ -31,7 +31,7 @@
 			        </div>
             
             		<!-- Form chỉnh sửa -->
-			      <form th:action="@{/manager/edit}" th:object="${user}" method="post">
+			      <form th:action="@{/manager/edit}" th:object="${user}" method="post" >
 			        <input type="hidden" th:field="*{employeeId}" />
 			
 			        <div class="mb-3">
@@ -43,6 +43,7 @@
 			            th:field="*{fullname}"
 			            class="form-control"
 			            required
+			            readonly
 			          />
 			        </div>
 			
@@ -66,6 +67,7 @@
 			            th:field="*{password}"
 			            class="form-control"
 			            required
+			            readonly
 			          />
 			        </div>
 			

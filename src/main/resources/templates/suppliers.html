@@ -32,7 +32,7 @@
 		        <div class="table-responsive">
 		            <table class="table table-bordered table-hover">
 		                <thead class="table-dark">
-		                    <tr>
+		                    <tr style="text-align: center;">
 		                        <th scope="col">ID</th>
 		                        <th scope="col">Tên nhà cung cấp</th>
 		                        <th scope="col">Địa chỉ</th>
@@ -43,29 +43,30 @@
 		                </thead>
 		                <tbody>
 		                    <tr th:each="supplier : ${listSuppliers}">
-		                        <td th:text="${supplier.supplierId}"></td>
+		                        <td style="text-align: center;" th:text="${supplier.supplierId}"></td>
 		                        <td th:text="${supplier.supplierName}"></td>
 		                        <td th:text="${supplier.address}"></td>
 		                        <td th:text="${supplier.phone}"></td>
 		                        <td th:text="${supplier.email}"></td>
-		                        <td>
+		                        <td style="text-align: center;">
 		                            <!-- Nút Sửa -->
-		                            <a th:href="@{'/suppliers/edit/' + ${supplier.supplierId}}" class="btn btn-warning btn-sm me-2">
-		                                Sửa
-		                            </a>
-		                            <!-- Nút Xóa -->
-		                            <form th:action="@{'/suppliers/delete/' + ${supplier.supplierId}}" method="post" class="d-inline">
-		                                <button type="submit" class="btn btn-danger btn-sm"
-		                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-		                                    Xóa
-		                                </button>
-		                            </form>
+								    <a th:href="@{'/suppliers/edit/' + ${supplier.supplierId}}" class="btn btn-warning btn-sm me-2" title="Chỉnh sửa">
+								        <i class="fas fa-pencil-alt"></i>
+								    </a>
+								    <!-- Nút Xóa -->
+								    <form th:action="@{'/suppliers/delete/' + ${supplier.supplierId}}" method="post" class="d-inline">
+								        <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
+								            onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+								            <i class="fas fa-trash-alt"></i>
+								        </button>
+								    </form>
 		                        </td>
 		                    </tr>
 		                </tbody>
 		            </table>
                 </div>
             </div>
+           </div>
         </div><!-- End Recent Sales -->
 
     </main><!-- End #main -->
