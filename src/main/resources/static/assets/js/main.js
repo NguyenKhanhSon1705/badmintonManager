@@ -320,11 +320,11 @@
 })();
 
 function selectCourt(element) {
-        // Remove blue border from all courts
+        // Xóa đường viền màu xanh khỏi tất cả các sân
         const courts = document.querySelectorAll('.court-card');
         courts.forEach(court => court.classList.remove('border-primary'));
 
-        // Add blue border to selected court
+        // Thêm đường viền màu xanh vào sân đã chọn
         element.classList.add('border-primary');
     }
 
@@ -406,3 +406,4 @@ function selectCourt(element) {
         // Gọi hàm tính tổng sau khi xóa dịch vụ
         updateTotal();
     }
+	

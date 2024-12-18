@@ -1,5 +1,7 @@
 package com.badmintonManager.badmintonManager.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,11 +20,13 @@ public class BillDetailsModel {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "bill_id", nullable = false)
+    @JoinColumn(name = "bill_id", nullable = false, referencedColumnName = "bill_id")
+    @JsonManagedReference
     private BillsModel bill;
     
     @ManyToOne
     @JoinColumn(name = "Service_Id", nullable = true)
+    @JsonManagedReference
     private ServicesModel service;
 
     @Column(name = "quantity", nullable = true)

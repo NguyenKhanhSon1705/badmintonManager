@@ -1,19 +1,29 @@
 package com.badmintonManager.badmintonManager.Controllers;
 
+import java.security.Timestamp;
+//import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.badmintonManager.badmintonManager.models.BillDetailsModel;
 import com.badmintonManager.badmintonManager.models.BillsModel;
 import com.badmintonManager.badmintonManager.models.CourtsModel;
 import com.badmintonManager.badmintonManager.models.EmployeesModel;
@@ -26,6 +36,7 @@ import com.badmintonManager.badmintonManager.services.interfaces.IBillsService;
 import com.badmintonManager.badmintonManager.utils.getCookies;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/bill")
@@ -51,6 +62,7 @@ public class BillsController {
         if (username == null) {
             return "redirect:/auth/login";
         }
+        model.addAttribute("username", username);
         ResponseModel result = service.getAllBills();
 
         if (!result.getIsSuccess()) {
@@ -72,56 +84,102 @@ public class BillsController {
     }
 
     @GetMapping("/create")
-    public String createBill(Model model) {
-    	// Lấy dữ liệu từ các service
-    	ResponseModel responseEmployees = employeeService.getAllEmployees();
+    public String createBill(Model model, HttpServletRequest request) {
+    	
+    	// Lấy tên tài khoản từ cookie
+        String username = getCookies.getCookieValue(request, "username");
+        if (username == null) {
+            return "redirect:/auth/login";
+        }
+
+        // Lấy thông tin nhân viên dựa trên username
+        EmployeesModel employee = employeeService.getEmployeeByUsername(username);
+        if (employee == null) {
+            model.addAttribute("error", "Không tìm thấy thông tin nhân viên.");
+            return "redirect:/auth/login";
+        }
+        model.addAttribute("employeeName", employee.getFullname());
+
+        // Lấy dữ liệu từ các service
         ResponseModel responseCourts = courtService.getAllCourts();
         ResponseModel responseServices = serviceService.getAllServices();
 
-     // Kiểm tra và lấy dữ liệu thực tế từ ResponseModel
-        if (responseEmployees.getIsSuccess()) {
-            List<EmployeesModel> employees = (List<EmployeesModel>) responseEmployees.getData();
-            model.addAttribute("employees", employees);
-        } else {
-            model.addAttribute("errorEmployees", responseEmployees.getMessage());
-        }
-
         if (responseCourts.getIsSuccess()) {
-            List<CourtsModel> courts = (List<CourtsModel>) responseCourts.getData();
-            model.addAttribute("courts", courts);
+            model.addAttribute("courts", responseCourts.getData());
         } else {
             model.addAttribute("errorCourts", responseCourts.getMessage());
         }
 
         if (responseServices.getIsSuccess()) {
-            List<ServicesModel> services = (List<ServicesModel>) responseServices.getData();
-            model.addAttribute("services", services);
+            model.addAttribute("services", responseServices.getData());
         } else {
             model.addAttribute("errorServices", responseServices.getMessage());
         }
-        
-        // Lấy thời gian hiện tại và tạp mã hóa đơn random
-        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
+
+        // Lấy thời gian hiện tại và tạo mã hóa đơn random
+        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String randomCode = "HD-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
 
-
-        // Truyền thời gian hiện tại và mã hóa đơn vào model
         model.addAttribute("currentDateTime", currentDateTime);
         model.addAttribute("randomCode", randomCode);
 
         return "addBill";
     }
-
-    @PostMapping("/addBill")
-    public String addBill(BillsModel bill, Model model) {
+    
+    //gốc
+    /*@PostMapping("/addBill")
+    public ResponseEntity<?> addBill(@RequestBody BillsModel bill) {
         try {
             service.createBills(bill);
+            return ResponseEntity.ok("Bill added successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error adding bill: " + e.getMessage());
+        }
+    }*/
+    
+    @PostMapping("/addBill")
+    public String addBill(
+        @RequestParam("currentDateTime") String currentDateTime,
+        @RequestParam("courtName") String courtName,
+        @RequestParam("totalAmount") double totalAmount,
+        @RequestParam("employeeName") String employeeName) {
+        try {
+            // Chuyển đổi currentDateTime từ String sang java.sql.Timestamp
+            java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(currentDateTime);
+
+            // Chuyển đổi Timestamp sang java.sql.Date
+            java.sql.Date createdAt = new java.sql.Date(timestamp.getTime());
+            
+            // Lấy mã nhân viên theo tên
+            EmployeesModel employee = employeeService.getEmployeeByName(employeeName);
+            if (employee == null) {
+                return "redirect:/bill/addBill?error=true&message=Không tìm thấy nhân viên";
+            }
+            
+            // Lấy mã sân theo tên
+            CourtsModel court = courtService.getCourtByName(courtName);
+            if (court == null) {
+                return "redirect:/bill/addBill?error=true&message=Không tìm thấy sân";
+            }
+
+            // Tạo hóa đơn
+            BillsModel bill = new BillsModel();
+            bill.setCreatedAt(createdAt);
+            bill.setCourtName(courtName);
+            bill.setTotalAmount(totalAmount);
+            bill.setEmployeeId(employee.getEmployeeId());
+            bill.setEmployeeName(employeeName);
+
+            // Lưu hóa đơn
+            service.save(bill);
             return "redirect:/bill/list";
         } catch (Exception e) {
-            model.addAttribute("error", "Lỗi khi thêm hóa đơn: " + e.getMessage());
-            return "addBill";
+            e.printStackTrace();
+            return "redirect:/bill/addBill?error=true";
         }
     }
+
+
 
     @GetMapping("/edit/{id}")
     public String editBill(@PathVariable("id") int billId, Model model) {

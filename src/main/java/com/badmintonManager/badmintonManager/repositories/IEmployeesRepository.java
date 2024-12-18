@@ -6,4 +6,5 @@ import com.badmintonManager.badmintonManager.models.EmployeesModel;
 
 public interface IEmployeesRepository extends JpaRepository<EmployeesModel, Integer>  {
     EmployeesModel findByUsername(String username);
+    EmployeesModel findByFullname(String employeeName);
 }

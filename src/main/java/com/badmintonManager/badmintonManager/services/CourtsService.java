@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.badmintonManager.badmintonManager.models.CourtsModel;
+import com.badmintonManager.badmintonManager.models.EmployeesModel;
 import com.badmintonManager.badmintonManager.models.ResponseModel;
 import com.badmintonManager.badmintonManager.repositories.ICourtsRepository;
 import com.badmintonManager.badmintonManager.services.interfaces.ICourtsService;
@@ -23,6 +24,10 @@ public class CourtsService implements ICourtsService {
 	public String getCourtNameById(Integer courtId) {
 		return repository.findById(courtId).map(CourtsModel::getCourtName).orElse("Unknown Court");
 	}
+    
+    public CourtsModel getCourtByName(String courtName) {
+        return repository.findBycourtName(courtName); 
+    }
 
     @Override
     public ResponseModel deleteCourts(Integer id) {

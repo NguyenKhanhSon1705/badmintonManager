@@ -1,6 +1,7 @@
 package com.badmintonManager.badmintonManager.services;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,36 +79,48 @@ public class BillsService implements IBillsService{
             return new ResponseModel("Cập nhật thất bại", null, 500, false);
         }
 	}
+	
+	@Override
+	public void save(BillsModel bill) {
+		bill.setCreatedAt(new java.sql.Date(bill.getCreatedAt().getTime()));
+		this.repository.save(bill);
+	}
 
 	@Override
 	public BillsModel findById(Integer id) {
 		return repository.findById(id).orElse(null);
 	}
 
-	@Transactional
-    public BillsModel saveBillAndDetails(Date createdAt, Double totalAmount, int courtId, int employeeId, List<BillDetailDTO> billDetails) {
-
-        // Lưu hóa đơn
+	/*@Transactional
+	public void saveBill(BillsModel billRequest) {
+        // Tạo Bill
         BillsModel bill = new BillsModel();
-        bill.setCreatedAt(createdAt);
-        bill.setTotalAmount(totalAmount);
-        bill.setCourtId(courtId);
-        bill.setEmployeeId(employeeId);
-        BillsModel savedBill = repository.save(bill);
+        bill.setCreatedAt(new java.sql.Date(billRequest.getCreatedAt().getTime()));
+        bill.setTotalAmount(billRequest.getTotalAmount());
+        bill.setCourtId(billRequest.getCourtId());
+        bill.setEmployeeId(billRequest.getEmployeeId());
 
-        // Lưu chi tiết hóa đơn
-        for (BillDetailDTO detail : billDetails) {
+        // Lưu Bill vào database
+        repository.save(bill);
+
+        // Tạo BillDetails và gán Bill
+        List<BillDetailsModel> billDetails = new ArrayList<>();
+        for (BillDetailsModel detailRequest : billRequest.getBillDetails()) {
             BillDetailsModel billDetail = new BillDetailsModel();
-            billDetail.setBill(savedBill);
-            // Tìm kiếm đối tượng ServicesModel dựa trên serviceId
-            ServicesModel service = servicerepository.findById(detail.getServiceId())
-                                    .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ với ID: " + detail.getServiceId()));
-            billDetail.setService(service); // Truyền đối tượng ServicesModel vào
-            billDetail.setQuantity(detail.getQuantity());
-            billDetail.setUnitprice(detail.getUnitPrice());
-            detailrepository.save(billDetail);
+            billDetail.setBill(bill);
+            billDetail.setQuantity(detailRequest.getQuantity());
+            billDetail.setUnitprice(detailRequest.getUnitprice());
+
+            // Lấy thông tin Service từ DB
+            Integer serviceId = detailRequest.getService().getServiceId();
+            ServicesModel service = servicerepository.findById(serviceId)
+                                                     .orElseThrow(() -> new RuntimeException("Service not found"));
+            billDetail.setService(service);
+
+            billDetails.add(billDetail);
         }
 
-        return savedBill;
-    }
+        // Lưu BillDetails vào database
+        detailrepository.saveAll(billDetails);
+    }*/
 }

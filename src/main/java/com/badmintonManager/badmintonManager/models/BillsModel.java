@@ -3,6 +3,8 @@ package com.badmintonManager.badmintonManager.models;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +35,7 @@ public class BillsModel {
     private int employeeId;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<BillDetailsModel> billDetails;
     
     private String employeeName;

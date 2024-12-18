@@ -32,7 +32,7 @@ public class ServicesController {
         if (username == null) {
             return "redirect:/auth/login";
         }
-        
+        model.addAttribute("username", username);
         ResponseModel result = service.getAllServices();
 
         if (!result.getIsSuccess()) {

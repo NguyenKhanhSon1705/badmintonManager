@@ -9,4 +9,6 @@ public interface IBillsService {
     ResponseModel createBills(BillsModel bills);
     ResponseModel updateBills(BillsModel bills);
     BillsModel findById(Integer id);
+	void save(BillsModel bill);
+	//void saveBill(BillsModel billRequest);
 }
