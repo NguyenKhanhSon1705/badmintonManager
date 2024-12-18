@@ -24,7 +24,7 @@ public class BookingModel {
     private CourtDetailsModel courtDetails;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false) // Khóa ngoại trỏ đến CustommerModel
+    @JoinColumn(name = "customer_id", nullable = false) 
     private CustommerModel customer;
 
     @Column(name = "status", nullable = false)
