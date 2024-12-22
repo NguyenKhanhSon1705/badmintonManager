@@ -1,4 +1,6 @@
 package com.badmintonManager.badmintonManager.models;
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +17,8 @@ public class ServicesModel {
     @Column(nullable = false, length = 100, name = "Service_Name")
     private String serviceName;
 
-    @Column(nullable = false, name = "Price")
-    private Double price;
+    @Column(nullable = false, name = "Price", precision = 10, scale = 3)
+    private BigDecimal price;
 
     // Getters and Setters
 
@@ -36,11 +38,11 @@ public class ServicesModel {
         this.serviceName = serviceName;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
     

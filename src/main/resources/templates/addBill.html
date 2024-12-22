@@ -23,6 +23,7 @@
                     <h2 class="mb-4 text-primary">Thông tin hóa đơn</h2>
                     <div class="invoice-details mb-3">
                         <p><strong>Mã hóa đơn:</strong> <span th:text="${randomCode}"></span></p>
+                        <input type="hidden" name="code" th:value="${randomCode}" />
                         <p><strong>Thời gian tạo:</strong> <span th:text="${currentDateTime}"></span></p>
                         <input type="hidden" name="currentDateTime" th:value="${currentDateTime}" />
                         <p><strong>Nhân viên: </strong><span th:text="${employeeName}"></span></p>
@@ -31,13 +32,13 @@
 
                     <!-- Chọn sân -->
                     <label for="court" class="form-label fw-bold">Chọn sân</label>
-                    <div class="court-selection d-flex flex-wrap justify-content-between">
-                        <div th:each="court : ${courts}" class="court-card text-center bg-info-light p-3 border" onclick="selectCourt(this)">
-                            <i class="fa fa-badminton" style="font-size: 50px;"></i>
-                            <p th:text="${court.courtName}"></p>
-                        </div>
-                        <input type="hidden" id="courtName" name="courtName" />
-                    </div>
+				    <div class="court-selection d-flex flex-wrap justify-content-between">
+				        <div th:each="court : ${courts}" class="court-card text-center bg-info-light p-3 border" onclick="selectCourt(this)">
+				            <i class="fa fa-badminton" style="font-size: 50px;"></i>
+				            <p th:text="${court.courtName}"></p>
+				        </div>
+				    </div>
+				    <input type="hidden" id="courtName" name="courtName" />
                 </div>
 
                 <!-- Chọn dịch vụ -->

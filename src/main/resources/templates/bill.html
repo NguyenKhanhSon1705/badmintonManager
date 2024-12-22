@@ -40,6 +40,7 @@
                 		<thead class="table-dark">
                     		<tr style="text-align: center;">
 		                        <th scope="col">ID</th>
+		                        <th scope="col">Mã hóa đơn</th>
 		                        <th scope="col">Tên sân</th>
 		                        <th scope="col">Tổng số tiền</th>
 		                        <th scope="col">Nhân viên tạo đơn</th>
@@ -49,6 +50,7 @@
                 	<tbody>
 	                    <tr th:each="bill : ${listBills}">
 	                        <td style="text-align: center;" th:text="${bill.billId}"></td>
+	                        <td style="text-align: center;" th:text="${bill.code}"></td>
 	                        <td style="text-align: center;" th:text="${bill.courtName}"></td>
 	                        <td style="text-align: center;" th:text="${bill.totalAmount}"></td>
 	                        <td style="text-align: center;" th:text="${bill.employeeName}"></td>

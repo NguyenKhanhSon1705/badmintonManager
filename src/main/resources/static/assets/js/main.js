@@ -320,13 +320,17 @@
 })();
 
 function selectCourt(element) {
-        // Xóa đường viền màu xanh khỏi tất cả các sân
-        const courts = document.querySelectorAll('.court-card');
-        courts.forEach(court => court.classList.remove('border-primary'));
+    // Xóa đường viền màu xanh khỏi tất cả các sân
+    const courts = document.querySelectorAll('.court-card');
+    courts.forEach(court => court.classList.remove('border-primary'));
 
-        // Thêm đường viền màu xanh vào sân đã chọn
-        element.classList.add('border-primary');
-    }
+    // Thêm đường viền màu xanh vào sân đã chọn
+    element.classList.add('border-primary');
+
+    // Gán giá trị sân được chọn vào input ẩn
+    const courtName = element.querySelector('p').innerText; // Lấy tên sân từ thẻ <p>
+    document.getElementById('courtName').value = courtName;
+}
 
     function addService() {
         const tableBody = document.querySelector('#services-table tbody');
@@ -339,7 +343,7 @@ function selectCourt(element) {
         const priceInput = newRow.querySelector('.price');
         const totalPriceElement = newRow.querySelector('.total-price');
         
-        quantityInput.value = 0;  // Đặt lại số lượng về 0
+        quantityInput.value = 1;  // Đặt lại số lượng về 0
         priceInput.value = 0;     // Đặt lại đơn giá về 0
         totalPriceElement.textContent = '0';  // Đặt lại thành tiền về 0
 
@@ -381,20 +385,24 @@ function selectCourt(element) {
         updateTotal();
     }
 
-    function updateTotal() {
-        // Lấy tất cả các giá trị thành tiền từ bảng
-        const totalPriceElements = document.querySelectorAll('.total-price');
-        let grandTotal = 0;
+	function updateTotal() {
+	    // Lấy tất cả các giá trị thành tiền từ bảng
+	    const totalPriceElements = document.querySelectorAll('.total-price');
+	    let grandTotal = 0;
 
-        // Duyệt qua tất cả các thành tiền và cộng dồn
-        totalPriceElements.forEach(element => {
-            grandTotal += parseFloat(element.textContent) || 0;
-        });
+	    // Duyệt qua tất cả các thành tiền và cộng dồn
+	    totalPriceElements.forEach(element => {
+	        grandTotal += parseFloat(element.textContent) || 0;
+	    });
 
-        // Cập nhật tổng tiền vào phần tử tổng tiền
-        const totalElement = document.querySelector('.total strong');
-        totalElement.textContent = grandTotal.toFixed(3) + ' VND';
-    }
+	    // Cập nhật tổng tiền vào phần tử tổng tiền hiển thị trên giao diện
+	    const totalElement = document.querySelector('.total strong');
+	    totalElement.textContent = grandTotal.toFixed(3) + ' VND';
+
+	    // Cập nhật giá trị của input hidden 'totalAmount' để gửi lên server
+	    const totalAmountInput = document.getElementById('totalAmount');
+	    totalAmountInput.value = grandTotal.toFixed(3);  // Lưu tổng tiền vào input hidden
+	}
     
     function deleteService(button) {
         // Lấy dòng (tr) chứa nút xóa

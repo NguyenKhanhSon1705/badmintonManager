@@ -24,7 +24,6 @@ public class CourtsService implements ICourtsService {
 	public String getCourtNameById(Integer courtId) {
 		return repository.findById(courtId).map(CourtsModel::getCourtName).orElse("Unknown Court");
 	}
-    
     public CourtsModel getCourtByName(String courtName) {
         return repository.findBycourtName(courtName); 
     }

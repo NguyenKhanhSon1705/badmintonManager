@@ -1,5 +1,6 @@
 package com.badmintonManager.badmintonManager.Controllers;
 
+import java.math.BigDecimal;
 import java.security.Timestamp;
 //import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ import com.badmintonManager.badmintonManager.models.CourtsModel;
 import com.badmintonManager.badmintonManager.models.EmployeesModel;
 import com.badmintonManager.badmintonManager.models.ResponseModel;
 import com.badmintonManager.badmintonManager.models.ServicesModel;
+import com.badmintonManager.badmintonManager.repositories.IBillDetailsRepository;
 import com.badmintonManager.badmintonManager.services.CourtsService;
 import com.badmintonManager.badmintonManager.services.EmployeesService;
 import com.badmintonManager.badmintonManager.services.ServiceService;
@@ -42,9 +44,11 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/bill")
 public class BillsController {
 	private final IBillsService service;
+	private final IBillDetailsRepository detailservice;
 	
-	public BillsController(IBillsService service) {
+	public BillsController(IBillsService service, IBillDetailsRepository detailservice) {
         this.service = service;
+        this.detailservice = detailservice;
     }
 
 	@Autowired
@@ -141,21 +145,23 @@ public class BillsController {
     public String addBill(
         @RequestParam("currentDateTime") String currentDateTime,
         @RequestParam("courtName") String courtName,
-        @RequestParam("totalAmount") double totalAmount,
-        @RequestParam("employeeName") String employeeName) {
+        @RequestParam("totalAmount") BigDecimal totalAmount,
+        @RequestParam("employeeName") String employeeName,
+        @RequestParam("code") String code,
+	    @RequestParam("serviceId") List<Integer> serviceId,
+	    @RequestParam("quantity") List<Integer> quantities,
+	    @RequestParam("price") List<BigDecimal> unitPrices){
         try {
             // Chuyển đổi currentDateTime từ String sang java.sql.Timestamp
             java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(currentDateTime);
-
-            // Chuyển đổi Timestamp sang java.sql.Date
             java.sql.Date createdAt = new java.sql.Date(timestamp.getTime());
-            
+
             // Lấy mã nhân viên theo tên
             EmployeesModel employee = employeeService.getEmployeeByName(employeeName);
             if (employee == null) {
                 return "redirect:/bill/addBill?error=true&message=Không tìm thấy nhân viên";
             }
-            
+
             // Lấy mã sân theo tên
             CourtsModel court = courtService.getCourtByName(courtName);
             if (court == null) {
@@ -166,20 +172,31 @@ public class BillsController {
             BillsModel bill = new BillsModel();
             bill.setCreatedAt(createdAt);
             bill.setCourtName(courtName);
+            bill.setCourtId(court.getCourtId());
             bill.setTotalAmount(totalAmount);
             bill.setEmployeeId(employee.getEmployeeId());
             bill.setEmployeeName(employeeName);
+            bill.setCode(code);
 
             // Lưu hóa đơn
-            service.save(bill);
+            BillsModel savedBill = service.save(bill);
+            
+	         // Lưu chi tiết hóa đơn (danh sách dịch vụ)
+	            for (int i = 0; i < serviceId.size(); i++) {
+	                BillDetailsModel billDetail = new BillDetailsModel();
+	                billDetail.setBill(savedBill);
+	                billDetail.setService(serviceService.findById(serviceId.get(i)));
+	                billDetail.setQuantity(quantities.get(i));
+	                billDetail.setUnitprice(unitPrices.get(i));
+	                detailservice.save(billDetail);
+	            }
+            
             return "redirect:/bill/list";
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/bill/addBill?error=true";
         }
     }
-
-
 
     @GetMapping("/edit/{id}")
     public String editBill(@PathVariable("id") int billId, Model model) {

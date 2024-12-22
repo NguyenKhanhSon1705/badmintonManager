@@ -81,46 +81,12 @@ public class BillsService implements IBillsService{
 	}
 	
 	@Override
-	public void save(BillsModel bill) {
-		bill.setCreatedAt(new java.sql.Date(bill.getCreatedAt().getTime()));
-		this.repository.save(bill);
-	}
+	public BillsModel save(BillsModel bill) {
+        return repository.save(bill);
+    }
 
 	@Override
 	public BillsModel findById(Integer id) {
 		return repository.findById(id).orElse(null);
 	}
-
-	/*@Transactional
-	public void saveBill(BillsModel billRequest) {
-        // Tạo Bill
-        BillsModel bill = new BillsModel();
-        bill.setCreatedAt(new java.sql.Date(billRequest.getCreatedAt().getTime()));
-        bill.setTotalAmount(billRequest.getTotalAmount());
-        bill.setCourtId(billRequest.getCourtId());
-        bill.setEmployeeId(billRequest.getEmployeeId());
-
-        // Lưu Bill vào database
-        repository.save(bill);
-
-        // Tạo BillDetails và gán Bill
-        List<BillDetailsModel> billDetails = new ArrayList<>();
-        for (BillDetailsModel detailRequest : billRequest.getBillDetails()) {
-            BillDetailsModel billDetail = new BillDetailsModel();
-            billDetail.setBill(bill);
-            billDetail.setQuantity(detailRequest.getQuantity());
-            billDetail.setUnitprice(detailRequest.getUnitprice());
-
-            // Lấy thông tin Service từ DB
-            Integer serviceId = detailRequest.getService().getServiceId();
-            ServicesModel service = servicerepository.findById(serviceId)
-                                                     .orElseThrow(() -> new RuntimeException("Service not found"));
-            billDetail.setService(service);
-
-            billDetails.add(billDetail);
-        }
-
-        // Lưu BillDetails vào database
-        detailrepository.saveAll(billDetails);
-    }*/
 }
