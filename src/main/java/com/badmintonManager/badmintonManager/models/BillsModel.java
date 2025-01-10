@@ -2,6 +2,8 @@ package com.badmintonManager.badmintonManager.models;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -24,7 +26,7 @@ public class BillsModel {
     private Integer billId;
 
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 3)
     private BigDecimal totalAmount;
@@ -44,16 +46,26 @@ public class BillsModel {
     
     private String employeeName;
     private String courtName;
+    
+    @Column(name = "checkin", nullable = true, length = 6)
+    private Time checkin;
+    
+    @Column(name = "checkout", nullable = true, length = 6)
+    private Time checkout;
+    
+    @Column(name = "status", nullable = true)
+    private int status = 0;
+    
 	public Integer getBillId() {
 		return billId;
 	}
 	public void setBillId(Integer billId) {
 		this.billId = billId;
 	}
-	public Date getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 	public BigDecimal getTotalAmount() {
@@ -97,5 +109,26 @@ public class BillsModel {
 	}
 	public void setCode(String code) {
 		this.code = code;
+	}
+	public Time getCheckin() {
+		return checkin;
+	}
+
+	public void setCheckin(Time checkin) {
+		this.checkin = checkin;
+	}
+
+	public Time getCheckout() {
+		return checkout;
+	}
+
+	public void setCheckout(Time checkout) {
+		this.checkout = checkout;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

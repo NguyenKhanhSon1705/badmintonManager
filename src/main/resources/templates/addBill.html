@@ -18,7 +18,6 @@
     <div class="container border rounded p-4 bg-white">
         <form th:action="@{/bill/addBill}" method="post">
             <div class="row">
-                <!-- Left panel - Invoice Information -->
                 <div class="col-md-4 col-sm-12 p-3 left-panel border rounded bg-primary-light">
                     <h2 class="mb-4 text-primary">Thông tin hóa đơn</h2>
                     <div class="invoice-details mb-3">
@@ -29,75 +28,138 @@
                         <p><strong>Nhân viên: </strong><span th:text="${employeeName}"></span></p>
                         <input type="hidden" name="employeeName" th:value="${employeeName}" />
                     </div>
-
-                    <!-- Chọn sân -->
+                    
                     <label for="court" class="form-label fw-bold">Chọn sân</label>
 				    <div class="court-selection d-flex flex-wrap justify-content-between">
-				        <div th:each="court : ${courts}" class="court-card text-center bg-info-light p-3 border" onclick="selectCourt(this)">
-				            <i class="fa fa-badminton" style="font-size: 50px;"></i>
-				            <p th:text="${court.courtName}"></p>
-				        </div>
+				        <div th:each="court : ${courts}" 
+						     class="court-card text-center p-3 border" 
+						     th:classappend="${court.status == 1} ? 'bg-danger text-white' : 'bg-info-light'" 
+						     th:onclick="selectCourt(this)" 
+						     data-court-id="${court.courtId}" 
+						     data-court-name="${court.courtName}" 
+						     data-status="${court.status}">
+						    <i class="fa fa-badminton" style="font-size: 50px;"></i>
+						    <p th:text="${court.courtName}"></p>
+						    <p th:if="${court.status == 1}" class="fw-bold"></p>
+						</div>
 				    </div>
 				    <input type="hidden" id="courtName" name="courtName" />
                 </div>
-
-                <!-- Chọn dịch vụ -->
                 <div class="col-md-8 col-sm-12 p-3 right-panel border rounded bg-secondary-light">
-                    <h2 class="mb-4 text-secondary">Danh sách dịch vụ</h2>
-                    <table class="table table-striped" id="services-table">
-                        <thead class="bg-primary-light">
-                            <tr class="text-center">
-                                <th class="col-3">Tên dịch vụ</th>
-                                <th class="col-2">Số lượng</th>
-                                <th class="col-2">Đơn giá(VND)</th>
-                                <th class="col-3">Thành tiền(VND)</th>
-                                <th class="col-2">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="form-control service-select" name="serviceId" onchange="updatePrice(this)">
-                                        <option value="">Chọn dịch vụ</option>
-                                        <option th:each="service : ${services}" 
-                                                th:value="${service.serviceId}" 
-                                                th:data-price="${service.price}" 
-                                                th:text="${service.serviceName}">
-                                        </option>
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <input type="number" value="0" min="0" class="form-control quantity" name="quantity" onchange="calculateTotal(this)">
-                                </td>
-                                <td class="text-center">
-                                    <input type="number" value="0" min="0" class="form-control price" readonly name="price" onchange="calculateTotal(this)">
-                                </td>
-                                <td class="text-center">
-                                    <span class="total-price">0</span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-danger" onclick="deleteService(this)">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                	<h2 class="mb-4 text-primary">Phí thuê sân</h2>
+                    <!-- Phí thuê sân -->
+					<table class="table table-striped" id="court-fee-table">
+					    <thead>
+					        <tr>
+					            <th>Tên sân</th>
+					            <th>Số lượng</th>
+					            <th>Đơn giá (VND)/giờ</th>
+					            <th>Thời gian vào</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					        <tr>
+					            <td id="selectedCourtName">
+					                <span>...</span>
+					            </td>
+					            <td>
+					                <span>1</span>
+					            </td>
+					            <td>
+					                <span>50.000</span>
+					                <input type="hidden" id="courtFee" name="courtFee" value="50.000" />
+					            </td>
+					            <td id="checkin">
+								    <span style="font-size: 18px; font-weight: bold;" id="checkinDisplay">...</span>
+								    <input type="hidden" id="checkinInput" name="checkin" />
+								</td>
+					        </tr>
+					    </tbody>
+					</table>
+					<h2 class="text-primary">Sử dụng dịch vụ</h2>
+					<table class="table table-striped" id="services-table">
+					    <thead>
+					        <tr>
+					            <th class="col-2">Tên dịch vụ</th>
+					            <th class="col-2">Số lượng</th>
+					            <th class="col-3">Đơn giá (VND)</th>
+					            <th class="col-3">Thành tiền (VND)</th>
+					            <th>Hành động</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					        <tr>
+					            <td>
+					                <select class="form-control service-select" name="serviceId" onchange="updatePrice(this)">
+					                    <option value="">Chọn dịch vụ</option>
+					                    <option th:each="service : ${services}" 
+					                            th:value="${service.serviceId}" 
+					                            th:data-price="${service.price}" 
+					                            th:text="${service.serviceName}">
+					                    </option>
+					                </select>
+					            </td>
+					            <td class="text-center">
+					                <input type="number" value="0" min="0" class="form-control quantity" name="quantity" onchange="calculateTotal(this)">
+					            </td>
+					            <td class="text-center">
+					                <input type="number" value="0" min="0" class="form-control price" readonly name="price" onchange="calculateTotal(this)">
+					            </td>
+					            <td class="text-center">
+					                <span class="total-price">0</span>
+					            </td>
+					            <td class="text-center">
+					                <button class="btn btn-danger" onclick="deleteService(this)">
+					                    <i class="fas fa-trash-alt"></i>
+					                </button>
+					            </td>
+					        </tr>
+					    </tbody>
+					</table>                   
                     <button class="btn btn-primary btn-sm mb-3" onclick="addService()" type="button">Thêm dịch vụ</button>
                     <hr>
-                    <p class="total text-end">Tổng tiền: <strong id="totalAmountDisplay">0 VND</strong></p>
-                    <input type="hidden" id="totalAmount" name="totalAmount" value="0" />
+                    <p class="total text-end">Tổng tiền: <strong id="totalAmountDisplay">50.000 VND</strong></p>
+                    <input type="hidden" id="totalAmount" name="totalAmount" value="50.000" />
                     <div class="d-flex justify-content-between">
                         <button type="submit" class="btn btn-success">Lưu hóa đơn</button>
                         <div>
                             <a href="/bill/list" class="btn btn-danger me-3">Hủy hóa đơn</a>
-                            <button class="btn btn-primary" type="button">Xác nhận thanh toán</button>
+                            <button class="btn btn-primary" type="button" id="confirmPaymentBtn">Xác nhận thanh toán</button>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
+		<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+		    <div class="modal-dialog modal-lg">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="paymentModalLabel">Thông tin hóa đơn</h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body">
+		                <h6><strong>Thời gian tạo hóa đơn:</strong> <span id="modalCreatedAt">...</span></h6>
+		                <h6><strong>Tên sân:</strong> <span id="modalCourtName">...</span></h6>
+		                <h6><strong>Thời gian vào:</strong> <span id="modalCheckin">...</span></h6>
+		                <h6><strong>Thời gian ra:</strong> <span id="modalCheckout">...</span></h6>
+		                <h6><strong>Tổng thời gian chơi:</strong> <span id="modalDuration">...</span></h6>
+		                <h6><strong>Dịch vụ đã sử dụng:</strong></h6>
+		                <ul id="modalServiceList">
+		                </ul>
+		                
+		                <h6 class="text-danger fw-bold bg-warning p-3 rounded text-end fs-4">
+						    <strong>Thanh toán:</strong> <span id="modalTotalAmount">50.000 VND</span>
+						</h6>
+		
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+		                <button type="button" class="btn btn-primary" id="confirmPaymentBtn">Xác nhận thanh toán</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
 </main>
 
 

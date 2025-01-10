@@ -10,5 +10,4 @@ public interface IBillsService {
     ResponseModel updateBills(BillsModel bills);
     BillsModel findById(Integer id);
     BillsModel save(BillsModel bill);
-	//void saveBill(BillsModel billRequest);
 }

@@ -2,6 +2,7 @@ package com.badmintonManager.badmintonManager.Controllers;
 
 import java.math.BigDecimal;
 import java.security.Timestamp;
+import java.sql.Time;
 //import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.badmintonManager.badmintonManager.models.BillDetailsModel;
 import com.badmintonManager.badmintonManager.models.BillsModel;
@@ -126,35 +128,33 @@ public class BillsController {
 
         model.addAttribute("currentDateTime", currentDateTime);
         model.addAttribute("randomCode", randomCode);
+        
 
         return "addBill";
     }
     
-    //gốc
-    /*@PostMapping("/addBill")
-    public ResponseEntity<?> addBill(@RequestBody BillsModel bill) {
-        try {
-            service.createBills(bill);
-            return ResponseEntity.ok("Bill added successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error adding bill: " + e.getMessage());
-        }
-    }*/
-    
     @PostMapping("/addBill")
     public String addBill(
-        @RequestParam("currentDateTime") String currentDateTime,
-        @RequestParam("courtName") String courtName,
-        @RequestParam("totalAmount") BigDecimal totalAmount,
-        @RequestParam("employeeName") String employeeName,
-        @RequestParam("code") String code,
-	    @RequestParam("serviceId") List<Integer> serviceId,
-	    @RequestParam("quantity") List<Integer> quantities,
-	    @RequestParam("price") List<BigDecimal> unitPrices){
+            @RequestParam("currentDateTime") String currentDateTime,
+            @RequestParam("courtName") String courtName,
+            @RequestParam("totalAmount") BigDecimal totalAmount,
+            @RequestParam("courtFee") BigDecimal courtFee, // Thêm tham số courtFee
+            @RequestParam("employeeName") String employeeName,
+            @RequestParam("code") String code,
+            @RequestParam("serviceId") List<Integer> serviceId,
+            @RequestParam("quantity") List<Integer> quantities,
+            @RequestParam("price") List<BigDecimal> unitPrices,
+            @RequestParam("checkin") String checkin, 
+            @RequestParam(value = "checkout", required = false) String checkout) {
+
         try {
-            // Chuyển đổi currentDateTime từ String sang java.sql.Timestamp
-            java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(currentDateTime);
-            java.sql.Date createdAt = new java.sql.Date(timestamp.getTime());
+            // Chuyển đổi currentDateTime từ String sang LocalDateTime
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime createdAt = LocalDateTime.parse(currentDateTime, formatter);
+            Time checkinTime = Time.valueOf(checkin); // Chuyển đổi checkin thành Time
+
+            // Nếu checkout không có giá trị, set nó thành null
+            Time checkoutTime = (checkout != null) ? Time.valueOf(checkout) : null;
 
             // Lấy mã nhân viên theo tên
             EmployeesModel employee = employeeService.getEmployeeByName(employeeName);
@@ -167,36 +167,45 @@ public class BillsController {
             if (court == null) {
                 return "redirect:/bill/addBill?error=true&message=Không tìm thấy sân";
             }
+            
+            court.setStatus(1);
+            courtService.updateCourts(court);
+
+         // Tổng tiền
+            BigDecimal finalTotalAmount = totalAmount;
 
             // Tạo hóa đơn
             BillsModel bill = new BillsModel();
             bill.setCreatedAt(createdAt);
             bill.setCourtName(courtName);
             bill.setCourtId(court.getCourtId());
-            bill.setTotalAmount(totalAmount);
+            bill.setTotalAmount(finalTotalAmount); // Cập nhật tổng tiền
             bill.setEmployeeId(employee.getEmployeeId());
             bill.setEmployeeName(employeeName);
             bill.setCode(code);
+            bill.setCheckin(checkinTime);
+            bill.setCheckout(checkoutTime);
+            bill.setStatus(0);
 
-            // Lưu hóa đơn
             BillsModel savedBill = service.save(bill);
-            
-	         // Lưu chi tiết hóa đơn (danh sách dịch vụ)
-	            for (int i = 0; i < serviceId.size(); i++) {
-	                BillDetailsModel billDetail = new BillDetailsModel();
-	                billDetail.setBill(savedBill);
-	                billDetail.setService(serviceService.findById(serviceId.get(i)));
-	                billDetail.setQuantity(quantities.get(i));
-	                billDetail.setUnitprice(unitPrices.get(i));
-	                detailservice.save(billDetail);
-	            }
-            
+
+            // Lưu chi tiết hóa đơn (danh sách dịch vụ)
+            for (int i = 0; i < serviceId.size(); i++) {
+                BillDetailsModel billDetail = new BillDetailsModel();
+                billDetail.setBill(savedBill);
+                billDetail.setService(serviceService.findById(serviceId.get(i)));
+                billDetail.setQuantity(quantities.get(i));
+                billDetail.setUnitprice(unitPrices.get(i));
+                detailservice.save(billDetail);
+            }
+
             return "redirect:/bill/list";
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/bill/addBill?error=true";
         }
     }
+
 
     @GetMapping("/edit/{id}")
     public String editBill(@PathVariable("id") int billId, Model model) {
@@ -207,30 +216,76 @@ public class BillsController {
             return "redirect:/bill/list";
         }
 
-        // Thêm đối tượng court vào model để hiển thị trong view
+        // Chuyển đổi thời gian tạo sang định dạng dd/MM/yyyy HH:mm:ss
+        String formattedDate = bill.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+        // Thêm đối tượng bill và thông tin chi tiết hóa đơn vào model
         model.addAttribute("bill", bill);
+        model.addAttribute("billDetails", bill.getBillDetails());
+        model.addAttribute("formattedDate", formattedDate);
+
+        // Các thông tin khác cần hiển thị
+        model.addAttribute("courts", courtService.getAllCourts().getData());
+        model.addAttribute("services", serviceService.getAllServices().getData());
+
         return "editBill";
     }
 
     @PostMapping("/edit/{id}")
-    public String updateBill(@PathVariable("id") int billId, @ModelAttribute BillsModel bill, Model model) {
-        bill.setCourtId(billId);
-        ResponseModel response = service.updateBills(bill);
+    public String updateBill(@PathVariable("id") int billId, 
+                             @ModelAttribute BillsModel bill, 
+                             @RequestParam("serviceId") List<Integer> serviceId, 
+                             @RequestParam("quantity") List<Integer> quantities, 
+                             @RequestParam("price") List<BigDecimal> unitPrices, 
+                             Model model) {
 
+        BillsModel existingBill = service.findById(billId);
+
+        if (existingBill == null) {
+            model.addAttribute("error", "Hóa đơn không tồn tại");
+            return "redirect:/bill/list";
+        }
+
+        // Cập nhật thông tin hóa đơn chính
+        existingBill.setTotalAmount(new BigDecimal(0)); // Đặt lại tổng số tiền
+        for (int i = 0; i < serviceId.size(); i++) {
+            // Tạo chi tiết hóa đơn mới cho dịch vụ
+            BillDetailsModel billDetail = new BillDetailsModel();
+            BillDetailsModel existingDetail = null;
+
+            // Tìm chi tiết dịch vụ nếu đã tồn tại, nếu không thì tạo mới
+            for (BillDetailsModel detail : existingBill.getBillDetails()) {
+                if (detail.getService().getServiceId() == serviceId.get(i)) {
+                    existingDetail = detail;
+                    break;
+                }
+            }
+
+            if (existingDetail != null) {
+                // Cập nhật thông tin nếu dịch vụ đã tồn tại
+                existingDetail.setQuantity(quantities.get(i));
+                existingDetail.setUnitprice(unitPrices.get(i));
+            } else {
+                // Thêm mới nếu dịch vụ chưa tồn tại
+                ServicesModel service = serviceService.findById(serviceId.get(i));
+                billDetail.setBill(existingBill);
+                billDetail.setService(service);
+                billDetail.setQuantity(quantities.get(i));
+                billDetail.setUnitprice(unitPrices.get(i));
+                detailservice.save(billDetail);
+            }
+
+            // Cập nhật tổng tiền
+            existingBill.setTotalAmount(existingBill.getTotalAmount().add(new BigDecimal(quantities.get(i)).multiply(unitPrices.get(i))));
+        }
+
+        // Cập nhật hóa đơn
+        ResponseModel response = service.updateBills(existingBill);
         if (!response.getIsSuccess()) {
             model.addAttribute("error", response.getMessage());
             return "editBill";
         }
 
-        return "redirect:/bill/list";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteBill(@PathVariable("id") Integer id, Model model) {
-        ResponseModel result = service.deleteBills(id);
-        if (!result.getIsSuccess()) {
-            model.addAttribute("error", result.getMessage());
-        }
         return "redirect:/bill/list";
     }
 

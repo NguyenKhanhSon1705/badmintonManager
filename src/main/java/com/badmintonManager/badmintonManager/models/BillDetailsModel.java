@@ -1,6 +1,7 @@
 package com.badmintonManager.badmintonManager.models;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
