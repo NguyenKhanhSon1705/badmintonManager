@@ -4,9 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.badmintonManager.badmintonManager.models.TimeSlotModel;
@@ -19,6 +17,6 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlotModel,Integer>
 
     List<TimeSlotModel> findBySlotDate(Date date);
 
-    @Procedure("GenerateTimeSlotsForAllCourts")
-    void InsertNewTimeSlotForAllCourts();
+    // @Procedure("GenerateTimeSlotsForAllCourts")
+    // void InsertNewTimeSlotForAllCourts();
 }

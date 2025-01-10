@@ -3,8 +3,6 @@ package com.badmintonManager.badmintonManager.services;
 import java.sql.Date;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.stereotype.Service;
 
 import com.badmintonManager.badmintonManager.models.TimeSlotModel;
@@ -28,7 +26,7 @@ public class TimeSlotService implements ITimeSlotService {
 
     @Override
     public List<TimeSlotModel> getTimeSlotByDay(Date day) {
-        String dateString = "2024-12-15";
+        String dateString = "2024-12-19";
         day = Date.valueOf(dateString);
         List<TimeSlotModel> l = repository.findBySlotDate(day);
         

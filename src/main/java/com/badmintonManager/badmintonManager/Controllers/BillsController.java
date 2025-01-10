@@ -71,6 +71,7 @@ public class BillsController {
         return "bill";
     }
 
+    @SuppressWarnings("unchecked")
     @GetMapping("/create")
     public String createBill(Model model) {
     	// Lấy dữ liệu từ các service
