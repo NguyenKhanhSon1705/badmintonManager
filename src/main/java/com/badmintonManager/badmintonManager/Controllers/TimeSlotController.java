@@ -21,7 +21,8 @@ public class TimeSlotController {
 
     @RequestMapping("/Homepage")
     public String homepage(Model model) {
-        String dateString = "2024-12-15";
+        String dateString = "2024-12-18";
+        
         Date day = Date.valueOf(dateString); 
         model.addAttribute("timeSlots", servie.getTimeSlotByDay(day));
         return "timeslot";

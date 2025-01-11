@@ -28,7 +28,7 @@ public class TimeSlotService implements ITimeSlotService {
 
     @Override
     public List<TimeSlotModel> getTimeSlotByDay(Date day) {
-        String dateString = "2024-12-15";
+        String dateString = "2024-12-18";
         day = Date.valueOf(dateString);
         List<TimeSlotModel> l = repository.findBySlotDate(day);
         
