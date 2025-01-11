@@ -293,7 +293,7 @@ public class BillsController {
     @PostMapping("/addBillWithPayment")
     public String addBillWithPayment(
         @RequestParam("currentDateTime") String currentDateTime,
-        @RequestParam("courtName") String courtName,
+        //@RequestParam("courtName") String courtName,
         @RequestParam("totalAmount") BigDecimal totalAmount,
         @RequestParam("courtFee") BigDecimal courtFee,
         @RequestParam("employeeName") String employeeName,
@@ -314,7 +314,10 @@ public class BillsController {
             if (employee == null) 
                 return "redirect:/bill/addBill?error=true&message=Không tìm thấy nhân viên";
 
-            CourtsModel court = courtService.getCourtByName(courtName);
+            String courtName = "Sân 1";
+            int courtId = 1;
+            
+            CourtsModel court = courtService.getCourtById(courtId);
             if (court == null) 
                 return "redirect:/bill/addBill?error=true&message=Không tìm thấy sân";
 
@@ -325,7 +328,7 @@ public class BillsController {
             BillsModel bill = new BillsModel();
             bill.setCreatedAt(createdAt);
             bill.setCourtName(courtName);
-            bill.setCourtId(court.getCourtId());
+            bill.setCourtId(courtId);
             bill.setTotalAmount(totalAmount);
             bill.setEmployeeId(employee.getEmployeeId());
             bill.setEmployeeName(employeeName);
@@ -352,7 +355,7 @@ public class BillsController {
             return "redirect:/bill/list";
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/bill/addBill?error=true";
+			return "redirect:/bill/addBill?error=true";
         }
     }
 
