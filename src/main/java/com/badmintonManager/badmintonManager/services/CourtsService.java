@@ -92,5 +92,10 @@ public class CourtsService implements ICourtsService {
             return new ResponseModel("Lỗi: " + e.getMessage(), null, 500, false);
         }
     }
+    
+    public CourtsModel getCourtById(int courtId) {
+        return repository.findById(courtId)
+                .orElse(null);
+    }
 
 }
