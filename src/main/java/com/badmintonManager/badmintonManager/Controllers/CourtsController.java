@@ -32,6 +32,7 @@ public class CourtsController {
         if (username == null) {
             return "redirect:/auth/login";
         }
+        model.addAttribute("username", username);
         ResponseModel result = service.getAllCourts();
 
         if (!result.getIsSuccess()) {

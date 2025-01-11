@@ -1,6 +1,7 @@
 package com.badmintonManager.badmintonManager.services;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,36 +79,14 @@ public class BillsService implements IBillsService{
             return new ResponseModel("Cập nhật thất bại", null, 500, false);
         }
 	}
+	
+	@Override
+	public BillsModel save(BillsModel bill) {
+        return repository.save(bill);
+    }
 
 	@Override
 	public BillsModel findById(Integer id) {
 		return repository.findById(id).orElse(null);
 	}
-
-	@Transactional
-    public BillsModel saveBillAndDetails(Date createdAt, Double totalAmount, int courtId, int employeeId, List<BillDetailDTO> billDetails) {
-
-        // Lưu hóa đơn
-        BillsModel bill = new BillsModel();
-        bill.setCreatedAt(createdAt);
-        bill.setTotalAmount(totalAmount);
-        bill.setCourtId(courtId);
-        bill.setEmployeeId(employeeId);
-        BillsModel savedBill = repository.save(bill);
-
-        // Lưu chi tiết hóa đơn
-        for (BillDetailDTO detail : billDetails) {
-            BillDetailsModel billDetail = new BillDetailsModel();
-            billDetail.setBill(savedBill);
-            // Tìm kiếm đối tượng ServicesModel dựa trên serviceId
-            ServicesModel service = servicerepository.findById(detail.getServiceId())
-                                    .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ với ID: " + detail.getServiceId()));
-            billDetail.setService(service); // Truyền đối tượng ServicesModel vào
-            billDetail.setQuantity(detail.getQuantity());
-            billDetail.setUnitprice(detail.getUnitPrice());
-            detailrepository.save(billDetail);
-        }
-
-        return savedBill;
-    }
 }

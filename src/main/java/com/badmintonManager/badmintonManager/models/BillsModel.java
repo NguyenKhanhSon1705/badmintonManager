@@ -1,7 +1,12 @@
 package com.badmintonManager.badmintonManager.models;
 
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,38 +26,52 @@ public class BillsModel {
     private Integer billId;
 
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    @Column(name = "total_amount", nullable = false)
-    private Double totalAmount;
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 3)
+    private BigDecimal totalAmount;
     
     @Column(name = "court_id", nullable = false)
     private int courtId;
     
     @Column(name = "employeeid", nullable = false)
     private int employeeId;
+    
+    @Column(name = "code", nullable = true, length = 8)
+    private String code;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<BillDetailsModel> billDetails;
     
     private String employeeName;
     private String courtName;
+    
+    @Column(name = "checkin", nullable = true, length = 6)
+    private Time checkin;
+    
+    @Column(name = "checkout", nullable = true, length = 6)
+    private Time checkout;
+    
+    @Column(name = "status", nullable = true)
+    private int status = 0;
+    
 	public Integer getBillId() {
 		return billId;
 	}
 	public void setBillId(Integer billId) {
 		this.billId = billId;
 	}
-	public Date getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Double getTotalAmount() {
+	public BigDecimal getTotalAmount() {
 		return totalAmount;
 	}
-	public void setTotalAmount(Double totalAmount) {
+	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 	public int getCourtId() {
@@ -84,5 +103,32 @@ public class BillsModel {
 	}
 	public void setCourtName(String courtName) {
 		this.courtName = courtName;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public Time getCheckin() {
+		return checkin;
+	}
+
+	public void setCheckin(Time checkin) {
+		this.checkin = checkin;
+	}
+
+	public Time getCheckout() {
+		return checkout;
+	}
+
+	public void setCheckout(Time checkout) {
+		this.checkout = checkout;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

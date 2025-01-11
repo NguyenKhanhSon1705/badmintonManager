@@ -12,17 +12,17 @@ import com.badmintonManager.badmintonManager.services.TimeSlotService;
 
 @Controller
 public class TimeSlotController {
-    private final TimeSlotService servie;
+	private final TimeSlotService service;
 
     public TimeSlotController(TimeSlotService service) {
-        this.servie = service;
+        this.service = service;
     }
 
     @RequestMapping("/Homepage")
     public String homepage(Model model) {
-        String dateString = "2024-12-15";
+        String dateString = "2025-01-09";
         Date day = Date.valueOf(dateString); 
-        model.addAttribute("timeSlots", servie.getTimeSlotByDay(day));
+        model.addAttribute("timeSlots", service.getTimeSlotByDay(day));
         return "timeslot";
     }
 
@@ -30,7 +30,7 @@ public class TimeSlotController {
     public String bookTimeSlots(@RequestParam("selectedSlots") List<Integer> selectedSlots, Model model) {
         if (selectedSlots != null && !selectedSlots.isEmpty()) {
             // Gọi service để cập nhật trạng thái cho các time slot được chọn
-            boolean updateTimeSlot = servie.updateTimeSlot(selectedSlots);
+            boolean updateTimeSlot = service.updateTimeSlot(selectedSlots);
             if(!updateTimeSlot){
                 model.addAttribute("message", "Sân này đã có người đặt rồi");
             }
@@ -40,7 +40,7 @@ public class TimeSlotController {
         }
 
         // Lấy lại danh sách time slots và hiển thị
-        model.addAttribute("timeSlots", servie.getTimeSlotByDay(null));
+        model.addAttribute("timeSlots", service.getTimeSlotByDay(null));
         return "timeslot";
     }
 }

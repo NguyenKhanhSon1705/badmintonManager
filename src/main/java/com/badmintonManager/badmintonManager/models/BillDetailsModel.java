@@ -1,5 +1,10 @@
 package com.badmintonManager.badmintonManager.models;
 
+import java.math.BigDecimal;
+import java.sql.Time;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,18 +23,20 @@ public class BillDetailsModel {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "bill_id", nullable = false)
+    @JoinColumn(name = "bill_id", nullable = false, referencedColumnName = "bill_id")
+    @JsonManagedReference
     private BillsModel bill;
     
     @ManyToOne
     @JoinColumn(name = "Service_Id", nullable = true)
+    @JsonManagedReference
     private ServicesModel service;
 
     @Column(name = "quantity", nullable = true)
     private int quantity;
 
-    @Column(name = "unit_price", nullable = true)
-    private Double unitprice;
+    @Column(name = "unit_price", nullable = true, precision = 10, scale = 3)
+    private BigDecimal unitprice;
 
 	public Integer getId() {
 		return id;
@@ -63,11 +70,11 @@ public class BillDetailsModel {
 		this.quantity = quantity;
 	}
 
-	public Double getUnitprice() {
+	public BigDecimal getUnitprice() {
 		return unitprice;
 	}
 
-	public void setUnitprice(Double unitprice) {
+	public void setUnitprice(BigDecimal unitprice) {
 		this.unitprice = unitprice;
 	}
 }

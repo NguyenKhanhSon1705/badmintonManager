@@ -19,6 +19,14 @@ public class EmployeesService implements IEmployeesService{
     public EmployeesService(IEmployeesRepository repository) {
 		this.repository = repository;
 	}
+    
+    public EmployeesModel getEmployeeByUsername(String username) {
+        return repository.findByUsername(username);
+    }
+    
+    public EmployeesModel getEmployeeByName(String employeeName) {
+        return repository.findByFullname(employeeName); 
+    }
 
 	@Override
 	public String getEmployeeNameById(Integer employeeid) {

@@ -10,9 +10,8 @@ import com.badmintonManager.badmintonManager.repositories.TimeSlotRepository;
 import com.badmintonManager.badmintonManager.services.interfaces.ITimeSlotService;
 
 @Service
-public class TimeSlotService implements ITimeSlotService {
-
-    private final TimeSlotRepository repository;
+public class TimeSlotService implements ITimeSlotService{
+	private final TimeSlotRepository repository;
 
     public TimeSlotService(TimeSlotRepository repository) {
         this.repository = repository;
@@ -26,7 +25,8 @@ public class TimeSlotService implements ITimeSlotService {
 
     @Override
     public List<TimeSlotModel> getTimeSlotByDay(Date day) {
-        String dateString = "2024-12-19";
+
+        String dateString = "2025-01-09";
         day = Date.valueOf(dateString);
         List<TimeSlotModel> l = repository.findBySlotDate(day);
         

@@ -1,17 +1,14 @@
 package com.badmintonManager.badmintonManager.models;
 
-
 import jakarta.persistence.*;
 
 import java.sql.Date;
 import java.sql.Time;
 
-
 @Entity
 @Table(name = "time_slots")
 public class TimeSlotModel {
-
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "slot_id")
     private int slotId;
@@ -93,6 +90,4 @@ public class TimeSlotModel {
 
     public TimeSlotModel() {
     }
-
-    
 }

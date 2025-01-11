@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.badmintonManager.badmintonManager.models.CourtsModel;
+import com.badmintonManager.badmintonManager.models.EmployeesModel;
 import com.badmintonManager.badmintonManager.models.ResponseModel;
 import com.badmintonManager.badmintonManager.repositories.ICourtsRepository;
 import com.badmintonManager.badmintonManager.services.interfaces.ICourtsService;
@@ -23,6 +24,9 @@ public class CourtsService implements ICourtsService {
 	public String getCourtNameById(Integer courtId) {
 		return repository.findById(courtId).map(CourtsModel::getCourtName).orElse("Unknown Court");
 	}
+    public CourtsModel getCourtByName(String courtName) {
+        return repository.findBycourtName(courtName); 
+    }
 
     @Override
     public ResponseModel deleteCourts(Integer id) {
@@ -44,16 +48,14 @@ public class CourtsService implements ICourtsService {
 
     @Override
     public ResponseModel getAllCourts() {
-        try{
+    	try {
             List<CourtsModel> courts = repository.findAll();
-
-            if (courts.size() <= 0) {
+            if (courts.isEmpty()) {
                 return new ResponseModel("Danh sách trống", null, 404, false);
             }
             return new ResponseModel("Danh sách sân", courts, 200, true);
-        }catch (Exception e){
-            return new ResponseModel("Lỗi: " + e.getMessage() , null, 404, false);
-
+        } catch (Exception e) {
+            return new ResponseModel("Lỗi: " + e.getMessage(), null, 404, false);
         }
     }
     @Override
@@ -73,6 +75,21 @@ public class CourtsService implements ICourtsService {
             return new ResponseModel("Cập nhật thành công", null, 200, true);
         } catch (Exception e) {
             return new ResponseModel("Cập nhật thất bại", null, 500, false);
+        }
+    }
+    
+    @Override
+    public ResponseModel resetCourtStatus(Integer courtId) {
+        try {
+            CourtsModel court = repository.findById(courtId).orElse(null);
+            if (court == null) {
+                return new ResponseModel("Không tìm thấy sân", null, 404, false);
+            }
+            court.setStatus(0);
+            repository.save(court);
+            return new ResponseModel("Cập nhật trạng thái thành công", null, 200, true);
+        } catch (Exception e) {
+            return new ResponseModel("Lỗi: " + e.getMessage(), null, 500, false);
         }
     }
 

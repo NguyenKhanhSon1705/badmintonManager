@@ -11,8 +11,7 @@ import com.badmintonManager.badmintonManager.models.TimeSlotModel;
 
 @Repository
 public interface TimeSlotRepository extends JpaRepository<TimeSlotModel,Integer> {
-    
-    //@Query(name="TimeSlotModel.findBySlotDate", value ="SELECT * FROM time_slots t WHERE t.slot_date = :day", nativeQuery = true)
+	//@Query(name="TimeSlotModel.findBySlotDate", value ="SELECT * FROM time_slots t WHERE t.slot_date = :day", nativeQuery = true)
     //List<TimeSlotModel> findBySlotDate(@Param("day") Date day); 
 
     List<TimeSlotModel> findBySlotDate(Date date);
