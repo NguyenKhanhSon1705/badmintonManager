@@ -1,14 +1,14 @@
-# Sử dụng image JDK 17
-FROM openjdk:23-jdk-slim
+# Sử dụng base image với Java 23
+FROM eclipse-temurin:23-jre-alpine
 
-# Tạo thư mục làm việc
+# Tạo thư mục chứa ứng dụng
 WORKDIR /app
 
-# Copy file JAR vào container
-COPY target/your-application.jar app.jar
+# Copy file WAR vào container từ thư mục target
+COPY target/badmintonManager-0.0.1-SNAPSHOT.war app.war
 
-# Expose cổng 8080
+# Expose port của ứng dụng Spring Boot
 EXPOSE 8888
 
-# Command chạy ứng dụng
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Chạy ứng dụng với file WAR
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.war"]

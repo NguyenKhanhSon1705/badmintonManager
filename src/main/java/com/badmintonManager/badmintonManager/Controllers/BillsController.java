@@ -40,7 +40,6 @@ import com.badmintonManager.badmintonManager.services.interfaces.IBillsService;
 import com.badmintonManager.badmintonManager.utils.getCookies;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/bill")
