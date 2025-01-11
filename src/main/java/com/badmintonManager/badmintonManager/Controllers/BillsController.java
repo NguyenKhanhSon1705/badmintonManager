@@ -289,5 +289,71 @@ public class BillsController {
 
         return "redirect:/bill/list";
     }
+    
+    @PostMapping("/addBillWithPayment")
+    public String addBillWithPayment(
+        @RequestParam("currentDateTime") String currentDateTime,
+        @RequestParam("courtName") String courtName,
+        @RequestParam("totalAmount") BigDecimal totalAmount,
+        @RequestParam("courtFee") BigDecimal courtFee,
+        @RequestParam("employeeName") String employeeName,
+        @RequestParam("code") String code,
+        @RequestParam(value = "serviceId", required = false) List<Integer> serviceId,
+        @RequestParam(value = "quantity", required = false) List<Integer> quantities,
+        @RequestParam(value = "price", required = false) List<BigDecimal> unitPrices,
+        @RequestParam("checkin") String checkin,
+        @RequestParam("checkout") String checkout) {
+        
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime createdAt = LocalDateTime.parse(currentDateTime, formatter);
+            Time checkinTime = Time.valueOf(checkin);
+            Time checkoutTime = Time.valueOf(checkout);
+
+            EmployeesModel employee = employeeService.getEmployeeByName(employeeName);
+            if (employee == null) 
+                return "redirect:/bill/addBill?error=true&message=Không tìm thấy nhân viên";
+
+            CourtsModel court = courtService.getCourtByName(courtName);
+            if (court == null) 
+                return "redirect:/bill/addBill?error=true&message=Không tìm thấy sân";
+
+            // Cập nhật trạng thái sân thành không hoạt động
+            court.setStatus(0);
+            courtService.updateCourts(court);
+
+            BillsModel bill = new BillsModel();
+            bill.setCreatedAt(createdAt);
+            bill.setCourtName(courtName);
+            bill.setCourtId(court.getCourtId());
+            bill.setTotalAmount(totalAmount);
+            bill.setEmployeeId(employee.getEmployeeId());
+            bill.setEmployeeName(employeeName);
+            bill.setCode(code);
+            bill.setCheckin(checkinTime);
+            bill.setCheckout(checkoutTime);
+            // Đặt trạng thái hóa đơn là đã thanh toán
+            bill.setStatus(1);
+
+            BillsModel savedBill = service.save(bill);
+
+            if (serviceId != null && !serviceId.isEmpty()) {
+                for (int i = 0; i < serviceId.size(); i++) {
+                    BillDetailsModel billDetail = new BillDetailsModel();
+                    billDetail.setBill(savedBill);
+                    billDetail.setService(serviceService.findById(serviceId.get(i)));
+                    billDetail.setQuantity(quantities.get(i));
+                    billDetail.setUnitprice(unitPrices.get(i));
+                    detailservice.save(billDetail);
+                }
+            }
+
+
+            return "redirect:/bill/list";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/bill/addBill?error=true";
+        }
+    }
 
 }

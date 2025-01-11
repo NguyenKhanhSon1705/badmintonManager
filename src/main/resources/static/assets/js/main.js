@@ -567,6 +567,77 @@ function addService() {
 	    }
 	}
 
+	// Thay đổi event listener cho nút xác nhận thanh toán trong modal
+	document.querySelector('#paymentModal .modal-footer #confirmPaymentBtn').addEventListener('click', function() {
+	    // Tạo form mới
+	    const form = document.createElement('form');
+	    form.method = 'POST';
+	    form.action = '/bill/addBillWithPayment';
 
+	    // Lấy tất cả các giá trị cần thiết
+	    const formData = {
+	        currentDateTime: document.querySelector('input[name="currentDateTime"]').value,
+	        courtName: document.getElementById('courtName').value,
+	        courtFee: document.getElementById('courtFee').value,
+	        employeeName: document.querySelector('input[name="employeeName"]').value,
+	        code: document.querySelector('input[name="code"]').value,
+	        checkin: document.getElementById('checkinInput').value,
+	        checkout: document.getElementById('modalCheckout').textContent,
+	        totalAmount: document.getElementById('modalTotalAmount').textContent.replace(' VND', '')
+	    };
+
+	    // Lấy thông tin dịch vụ
+	    const serviceIds = [];
+	    const quantities = [];
+	    const prices = [];
+	    document.querySelectorAll('#services-table tbody tr').forEach(row => {
+	        const serviceSelect = row.querySelector('.service-select');
+	        const quantity = row.querySelector('.quantity');
+	        const price = row.querySelector('.price');
+	        
+	        if (serviceSelect.value) {
+	            serviceIds.push(serviceSelect.value);
+	            quantities.push(quantity.value);
+	            prices.push(price.value);
+	        }
+	    });
+
+	    // Thêm tất cả input vào form
+	    Object.keys(formData).forEach(key => {
+	        const input = document.createElement('input');
+	        input.type = 'hidden';
+	        input.name = key;
+	        input.value = formData[key];
+	        form.appendChild(input);
+	    });
+
+	    // Thêm các input cho dịch vụ
+		if (serviceIds.length > 0) {
+		    serviceIds.forEach((serviceId, index) => {
+		        const serviceInput = document.createElement('input');
+		        serviceInput.type = 'hidden';
+		        serviceInput.name = 'serviceId';
+		        serviceInput.value = serviceId;
+		        form.appendChild(serviceInput);
+
+		        const quantityInput = document.createElement('input');
+		        quantityInput.type = 'hidden';
+		        quantityInput.name = 'quantity';
+		        quantityInput.value = quantities[index];
+		        form.appendChild(quantityInput);
+
+		        const priceInput = document.createElement('input');
+		        priceInput.type = 'hidden';
+		        priceInput.name = 'price';
+		        priceInput.value = prices[index];
+		        form.appendChild(priceInput);
+		    });
+		}
+
+
+	    // Thêm form vào document và submit
+	    document.body.appendChild(form);
+	    form.submit();
+	});
 
 	
