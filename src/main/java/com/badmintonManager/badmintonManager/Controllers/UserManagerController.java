@@ -32,6 +32,7 @@ public class UserManagerController {
         if(username == null){
             return "redirect:/auth/login";
         }
+        model.addAttribute("username", username);
         ResponseModel result = service.getAllUser();
 
         if (!result.getIsSuccess()) {

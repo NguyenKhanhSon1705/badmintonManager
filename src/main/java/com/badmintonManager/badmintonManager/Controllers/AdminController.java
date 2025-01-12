@@ -18,6 +18,7 @@ public class AdminController {
         if (username == null) {
             return "redirect:/auth/login";
         }
+        model.addAttribute("username", username);
         return "admin";
     }
 }

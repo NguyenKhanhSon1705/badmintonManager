@@ -318,3 +318,326 @@
   }
 
 })();
+
+function selectCourt(element) {
+    // Xóa đường viền màu xanh khỏi tất cả các sân
+    const courts = document.querySelectorAll('.court-card');
+    courts.forEach(court => court.classList.remove('border-primary'));
+
+    // Thêm đường viền màu xanh vào sân đã chọn
+    element.classList.add('border-primary');
+
+    // Gán giá trị sân được chọn vào input ẩn
+    const courtName = element.querySelector('p').innerText; // Lấy tên sân từ thẻ <p>
+    document.getElementById('courtName').value = courtName;
+
+    // Cập nhật tên sân vào phần "Tên sân" trong bảng "Phí thuê sân"
+    const selectedCourtNameElement = document.getElementById('selectedCourtName');
+    if (selectedCourtNameElement) {
+        selectedCourtNameElement.querySelector('span').textContent = courtName;
+    }
+
+    // Gọi hàm cập nhật thời gian vào
+    updateCheckInTime();
+}
+
+
+function addService() {
+    // Lấy phần thân của bảng "Danh sách dịch vụ"
+    const servicesTableBody = document.querySelector('#services-table tbody');
+
+    // Lấy dòng mẫu từ bảng "Danh sách dịch vụ"
+    const sampleRow = servicesTableBody.querySelector('tr');
+
+    // Tạo một dòng mới từ dòng mẫu
+    const newRow = sampleRow.cloneNode(true);
+
+    // Xóa giá trị trong các ô input của dòng mới
+    const quantityInput = newRow.querySelector('.quantity');
+    const priceInput = newRow.querySelector('.price');
+    const totalPriceElement = newRow.querySelector('.total-price');
+
+    quantityInput.value = 0; // Đặt lại số lượng về 1
+    priceInput.value = 0;    // Đặt lại đơn giá về 0
+    totalPriceElement.textContent = '0'; // Đặt lại thành tiền về 0
+
+    // Thêm dòng mới vào bảng "Danh sách dịch vụ"
+    servicesTableBody.appendChild(newRow);
+
+    // Cập nhật lại trạng thái nút xóa sau khi thêm dịch vụ
+    updateDeleteButtonStatus();
+
+    // Gọi hàm tính tổng sau khi thêm dịch vụ mới
+    updateTotal();
+}
+
+    
+    function updatePrice(selectElement) {
+        // Lấy giá dịch vụ từ thuộc tính data-price của option được chọn
+        const price = selectElement.options[selectElement.selectedIndex].getAttribute('data-price');
+        
+        // Lấy ô input "Đơn giá" trong cùng một dòng
+        const row = selectElement.closest('tr');
+        const priceInput = row.querySelector('.price');
+        
+        // Cập nhật giá vào ô input "Đơn giá"
+        priceInput.value = price ? price : 0;
+        
+        // Gọi hàm tính tổng sau khi cập nhật đơn giá
+        updateTotal();
+    }
+    
+    function calculateTotal(element) {
+        // Lấy dòng (tr) chứa ô input thay đổi
+        const row = element.closest('tr');
+        
+        // Lấy giá trị của số lượng và đơn giá
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const price = parseFloat(row.querySelector('.price').value) || 0;
+        
+        // Tính thành tiền
+        const total = quantity * price;
+        
+        // Cập nhật giá trị vào cột "Thành tiền"
+        const totalPriceElement = row.querySelector('.total-price');
+        totalPriceElement.textContent = total.toFixed(3); // Hiển thị 3 chữ số sau dấu phẩy
+        
+        // Gọi hàm tính tổng sau khi tính thành tiền
+        updateTotal();
+    }
+
+	function updateTotal() {
+	    // Lấy giá trị phí thuê sân từ input hidden 'courtFee'
+	    const courtFee = parseFloat(document.getElementById('courtFee').value) || 0;
+
+	    // Lấy tất cả các giá trị thành tiền từ bảng dịch vụ
+	    const totalPriceElements = document.querySelectorAll('.total-price');
+
+	    // Tính tổng tiền từ các dịch vụ
+	    let serviceTotal = 0;
+	    totalPriceElements.forEach(element => {
+	        serviceTotal += parseFloat(element.textContent) || 0;
+	    });
+
+	    // Tính tổng tiền cuối cùng (dịch vụ + phí thuê sân)
+	    const grandTotal = serviceTotal + courtFee;
+
+	    // Cập nhật tổng tiền vào phần tử hiển thị trên giao diện
+	    const totalElement = document.querySelector('.total strong');
+	    totalElement.textContent = grandTotal.toFixed(3) + ' VND';
+
+	    // Cập nhật giá trị của input hidden 'totalAmount' để gửi lên server
+	    const totalAmountInput = document.getElementById('totalAmount');
+	    totalAmountInput.value = grandTotal.toFixed(3); // Lưu tổng tiền vào input hidden
+	}
+
+
+    
+	function deleteService(button) {
+	    // Lấy dòng (tr) chứa nút xóa
+	    const row = button.closest('tr');
+	    
+	    // Xóa dòng khỏi bảng
+	    row.remove();
+	    
+	    // Cập nhật lại trạng thái nút xóa sau khi xóa dịch vụ
+	    updateDeleteButtonStatus();
+
+	    // Gọi hàm tính tổng sau khi xóa dịch vụ
+	    updateTotal();
+	}
+	
+	function updateDeleteButtonStatus() {
+	    // Lấy tất cả các dòng trong bảng
+	    const rows = document.querySelectorAll('#services-table tbody tr');
+
+	    // Nếu chỉ còn một dòng, vô hiệu hóa tất cả các nút xóa
+	    if (rows.length <= 1) {
+	        rows.forEach(row => {
+	            const deleteButton = row.querySelector('.btn-danger');
+	            deleteButton.disabled = true; // Vô hiệu hóa nút xóa
+	        });
+	    } else {
+	        // Nếu có nhiều hơn một dòng, bật lại nút xóa
+	        rows.forEach(row => {
+	            const deleteButton = row.querySelector('.btn-danger');
+	            deleteButton.disabled = false; // Bật lại nút xóa
+	        });
+	    }
+	}
+	
+	// Lấy thời gian hiện tại và định dạng thành HH:mm:ss
+	function updateCheckInTime() {
+	    const selectedCourtName = document.getElementById('selectedCourtName').querySelector('span').textContent;
+
+	    if (selectedCourtName !== "...") { // Chỉ cập nhật nếu đã chọn sân
+	        const now = new Date();
+	        const formattedTime = now.toLocaleTimeString('en-US', { hour12: false }); // Định dạng HH:mm:ss
+
+	        // Hiển thị thời gian trên giao diện
+	        document.getElementById('checkinDisplay').textContent = formattedTime;
+
+	        // Lưu thời gian vào input ẩn
+	        document.getElementById('checkinInput').value = formattedTime;
+	    }
+	}
+
+	// Gọi hàm ngay khi trang được tải
+	document.addEventListener('DOMContentLoaded', function () {
+		updateDeleteButtonStatus();
+	    document.getElementById('checkinDisplay').textContent = "...";
+	    document.getElementById('checkinInput').value = ""; // Đặt giá trị rỗng ban đầu
+	});
+	
+	
+	document.getElementById('confirmPaymentBtn').addEventListener('click', function () {
+	    const createdAt = document.querySelector('input[name="currentDateTime"]').value;
+	    const courtName = document.getElementById('courtName').value;
+	    const checkin = document.getElementById('checkinInput').value;
+	    const checkout = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+	    const courtFee = parseFloat(document.getElementById('courtFee').value) || 0;
+
+	    document.getElementById('modalCreatedAt').textContent = createdAt;
+	    document.getElementById('modalCourtName').textContent = courtName;
+	    document.getElementById('modalCheckin').textContent = checkin;
+	    document.getElementById('modalCheckout').textContent = checkout;
+
+	    // Tính tổng thời gian chơi
+	    const checkinTime = new Date(`1970-01-01T${checkin}Z`);
+	    const checkoutTime = new Date(`1970-01-01T${checkout}Z`);
+	    let durationInSeconds = (checkoutTime - checkinTime) / 1000;
+
+	    if (durationInSeconds < 0) {
+	        durationInSeconds += 24 * 60 * 60; // Điều chỉnh nếu qua nửa đêm
+	    }
+
+	    const hours = Math.floor(durationInSeconds / 3600);
+	    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+	    const seconds = Math.floor(durationInSeconds % 60);
+	    document.getElementById('modalDuration').textContent = `${hours} giờ ${minutes} phút ${seconds} giây`;
+
+	    const durationInHours = durationInSeconds / 3600;
+
+	    // Tính tổng tiền dịch vụ
+	    const totalPriceElements = document.querySelectorAll('.total-price');
+	    let serviceTotal = 0;
+	    totalPriceElements.forEach(element => {
+	        serviceTotal += parseFloat(element.textContent) || 0;
+	    });
+
+	    // Tính toán tổng số tiền
+	    const totalAmount = (durationInHours * courtFee + serviceTotal).toFixed(3);
+	    document.getElementById('modalTotalAmount').textContent = `${totalAmount} VND`;
+
+	    // Cập nhật danh sách dịch vụ
+	    const serviceList = document.querySelectorAll('.service-select');
+	    const modalServiceList = document.getElementById('modalServiceList');
+	    modalServiceList.innerHTML = '';
+
+	    serviceList.forEach(function (serviceSelect, index) {
+	        const serviceName = serviceSelect.options[serviceSelect.selectedIndex].textContent;
+	        const quantity = document.querySelectorAll('.quantity')[index].value;
+	        const unitPrice = document.querySelectorAll('.price')[index].value;
+	        const totalServicePrice = (parseFloat(quantity) * parseFloat(unitPrice)).toFixed(3);
+	        const listItem = document.createElement('li');
+	        listItem.textContent = `${serviceName} - ${quantity} x ${unitPrice} VND = ${totalServicePrice} VND`;
+	        modalServiceList.appendChild(listItem);
+	    });
+
+	    new bootstrap.Modal(document.getElementById('paymentModal')).show();
+	});
+
+	
+	
+	function updateCourtStatus(courtId, status) {
+	    const courtElement = document.querySelector(`[data-court-id="${courtId}"]`);
+	    if (courtElement) {
+	        if (status === 1) {
+	            courtElement.classList.remove('bg-info-light');
+	            courtElement.classList.add('bg-danger', 'text-white');
+	            courtElement.removeAttribute('onclick');
+	            courtElement.querySelector('p.status').textContent = 'Đang sử dụng';
+	        } else {
+	            courtElement.classList.remove('bg-danger', 'text-white');
+	            courtElement.classList.add('bg-info-light');
+	            courtElement.setAttribute('onclick', 'selectCourt(this)');
+	            courtElement.querySelector('p.status').textContent = '';
+	        }
+	    }
+	}
+
+	// Thay đổi event listener cho nút xác nhận thanh toán trong modal
+	document.querySelector('#paymentModal .modal-footer #confirmPaymentBtn').addEventListener('click', function() {
+	    // Tạo form mới
+	    const form = document.createElement('form');
+	    form.method = 'POST';
+	    form.action = '/bill/addBillWithPayment';
+
+	    // Lấy tất cả các giá trị cần thiết
+	    const formData = {
+	        currentDateTime: document.querySelector('input[name="currentDateTime"]').value,
+	        courtName: document.getElementById('courtName').value,
+	        courtFee: document.getElementById('courtFee').value,
+	        employeeName: document.querySelector('input[name="employeeName"]').value,
+	        code: document.querySelector('input[name="code"]').value,
+	        checkin: document.getElementById('checkinInput').value,
+	        checkout: document.getElementById('modalCheckout').textContent,
+	        totalAmount: document.getElementById('modalTotalAmount').textContent.replace(' VND', '')
+	    };
+
+	    // Lấy thông tin dịch vụ
+	    const serviceIds = [];
+	    const quantities = [];
+	    const prices = [];
+	    document.querySelectorAll('#services-table tbody tr').forEach(row => {
+	        const serviceSelect = row.querySelector('.service-select');
+	        const quantity = row.querySelector('.quantity');
+	        const price = row.querySelector('.price');
+	        
+	        if (serviceSelect.value) {
+	            serviceIds.push(serviceSelect.value);
+	            quantities.push(quantity.value);
+	            prices.push(price.value);
+	        }
+	    });
+
+	    // Thêm tất cả input vào form
+	    Object.keys(formData).forEach(key => {
+	        const input = document.createElement('input');
+	        input.type = 'hidden';
+	        input.name = key;
+	        input.value = formData[key];
+	        form.appendChild(input);
+	    });
+
+	    // Thêm các input cho dịch vụ
+		if (serviceIds.length > 0) {
+		    serviceIds.forEach((serviceId, index) => {
+		        const serviceInput = document.createElement('input');
+		        serviceInput.type = 'hidden';
+		        serviceInput.name = 'serviceId';
+		        serviceInput.value = serviceId;
+		        form.appendChild(serviceInput);
+
+		        const quantityInput = document.createElement('input');
+		        quantityInput.type = 'hidden';
+		        quantityInput.name = 'quantity';
+		        quantityInput.value = quantities[index];
+		        form.appendChild(quantityInput);
+
+		        const priceInput = document.createElement('input');
+		        priceInput.type = 'hidden';
+		        priceInput.name = 'price';
+		        priceInput.value = prices[index];
+		        form.appendChild(priceInput);
+		    });
+		}
+
+
+	    // Thêm form vào document và submit
+	    document.body.appendChild(form);
+	    form.submit();
+	});
+
+	

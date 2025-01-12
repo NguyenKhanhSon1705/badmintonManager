@@ -33,7 +33,7 @@ public class SuppliersController {
         if (username == null) {
             return "redirect:/auth/login";
         }
-        
+        model.addAttribute("username", username);
         ResponseModel result = service.getAllSuppliers();
 
         if (!result.getIsSuccess()) {

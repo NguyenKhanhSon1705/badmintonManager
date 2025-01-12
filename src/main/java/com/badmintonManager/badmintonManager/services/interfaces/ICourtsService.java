@@ -9,4 +9,6 @@ public interface ICourtsService {
     ResponseModel createCourts(CourtsModel courts);
     ResponseModel updateCourts(CourtsModel courts);
     CourtsModel findById(Integer id);
+    String getCourtNameById(Integer courtId);
+    ResponseModel resetCourtStatus(Integer courtId);
 }
