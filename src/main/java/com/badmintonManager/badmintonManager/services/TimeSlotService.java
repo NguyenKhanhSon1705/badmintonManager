@@ -27,7 +27,7 @@ public class TimeSlotService implements ITimeSlotService{
 
     @Override
     public List<TimeSlotModel> getTimeSlotByDay(Date day) {
-        String dateString = "2025-01-12";
+        String dateString = "2025-01-13";
         day = Date.valueOf(dateString);
         List<TimeSlotModel> l = repository.findBySlotDate(day);
         
@@ -60,5 +60,16 @@ public class TimeSlotService implements ITimeSlotService{
             if(!updateTimeSlot) return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean InsertNewTimeSlotForAllCourts() {
+        if(true)
+        {
+            repository.InsertNewTimeSlotForAllCourts();
+            return true;
+
+        }     
+        throw new UnsupportedOperationException("Unimplemented method 'InsertNewTimeSlotForAllCourts'");
     }
 }

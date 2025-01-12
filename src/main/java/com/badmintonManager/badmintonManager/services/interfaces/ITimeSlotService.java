@@ -10,4 +10,7 @@ public interface ITimeSlotService {
     List<TimeSlotModel> getTimeSlotByDay(Date day);
     boolean UpdateTimeSlot(TimeSlotModel timeSlotModel);
     boolean updateTimeSlot(List<Integer> list);
+    boolean InsertNewTimeSlotForAllCourts();
+
+
 }

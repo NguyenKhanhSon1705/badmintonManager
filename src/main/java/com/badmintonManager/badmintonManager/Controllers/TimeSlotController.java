@@ -39,10 +39,20 @@ public class TimeSlotController {
     @RequestMapping("/Homepage")
     public String homepage(Model model) {
 
-        String dateString = "2025-01-12";
+        String dateString = "2025-01-13";
         Date day = Date.valueOf(dateString); 
         model.addAttribute("timeSlots", service.getTimeSlotByDay(day));
         return "timeslot";
+    }
+
+    @PostMapping("/generate")
+    public String generateTimeSlotsForAllCourts() {
+        try {
+            service.InsertNewTimeSlotForAllCourts();
+            return "Time slots have been successfully generated!";
+        } catch (Exception e) {
+            return "An error occurred: " + e.getMessage();
+        }
     }
 
     @PostMapping("/bookTimeSlots")
